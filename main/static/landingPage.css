@@ -1,0 +1,268 @@
+/* 1. THE RESET - Fixes the white line/overflow issues */
+* {
+    box-sizing: border-box; /* Crucial: padding no longer adds to width */
+}
+
+body {
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: sans-serif;
+    background-image: linear-gradient(135deg, #ffffff, #c4e4ff);
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* 2. NAVIGATION - Fixed the margin-left overflow */
+.navLogo {
+    display: flex;
+    padding: 15px 20px; /* Use padding instead of margin-left */
+    width: 100%;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.1); /* Slight glass effect */
+    backdrop-filter: blur(5px);
+}
+
+.logo {
+    color: blue;
+    font-weight: 700;
+}
+
+.logoBlack {
+    color: black;
+}
+
+/* 3. MAIN CONTENT */
+.main {
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Top {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 50px;
+    background-color: #eff6ff;
+    color: #2563eb;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid #dbeafe;
+    margin-bottom: 15px;
+}
+
+.main h1 {
+    font-size: 2.5rem;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    color: #1f2937;
+}
+
+.highlight {
+    color: blue;
+}
+
+.main p {
+    font-size: 1.1rem;
+    padding: 10px;
+    color: #4b5563;
+}
+
+/* 4. BUTTONS */
+.tryBtn {
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding: 15px 30px;
+    border-radius: 8px;
+    border: none;
+    background-color: blue;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s;
+    display: inline-block;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4);
+    margin-top: 10px;
+}
+
+.tryBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.6);
+}
+
+/* 5. FEATURES SECTION */
+.features {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    width: 100%;
+}
+
+.feature-cards {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+    width: 160px;
+    height: 100px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: #374151;
+}
+
+.card-icon {
+    font-size: 1.5rem;
+    color: #2563eb;
+    margin-bottom: 8px;
+}
+
+/* 6. TESTIMONIALS */
+.testimonials {
+    width: 100%;
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.imgDiv {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.imgDiv img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 2px solid white;
+    margin-right: -15px;
+}
+
+.last-img-container {
+    position: relative;
+    display: inline-block;
+}
+
+.last-img-container img {
+    filter: blur(2px) brightness(0.7);
+    margin-right: 0;
+}
+
+.test-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.test-label {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* 7. FAQ */
+.faq {
+    width: 90%;
+    max-width: 700px;
+    margin-top: 60px;
+    padding-bottom: 40px;
+}
+
+.faq h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+    color: #1f2937;
+}
+
+.faq-item {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 15px 0;
+}
+
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    font-weight: 500;
+    color: #111827;
+    transition: all 0.3s;
+}
+
+.faq-question:hover {
+    color: #2563eb;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin-top: 10px;
+}
+
+/* 8. FOOTER */
+.footer {
+    margin-top: auto;
+    padding: 30px 20px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #6b7280;
+    width: 100%;
+}
+
+.footer a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+/* --- MOBILE SPECIFIC (Pixel 7 / 600px) --- */
+@media (max-width: 600px) {
+    .main h1 {
+        font-size: 1.8rem; /* Smaller for phone screens */
+    }
+    
+    .feature-cards {
+        width: 45%; /* Two cards side-by-side on mobile */
+        height: 110px;
+    }
+    
+    .navLogo {
+        padding: 10px 15px;
+    }
+
+    .tryBtn {
+        width: 100%; /* Full width button on mobile */
+        max-width: 300px;
+        text-align: center;
+    }
+
+    .faq {
+        width: 95%;
+    }
+}

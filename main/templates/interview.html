@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/interview.css">
+    <title>Interview</title>
+</head>
+<body>
+    
+<div id="loader-overlay" class="loader-overlay">
+	
+    <div class="ai-orb">
+        <!-- Inner Energy Core -->
+        <div class="orb-center"></div>
+        <!-- High-speed inner wave -->
+        <div class="wave wave-primary"></div>
+        <!-- Slower outer glow wave -->
+        <div class="wave wave-secondary"></div>
+        <!-- The boundary ring -->
+        <div class="orb-ring"></div>
+    </div>
+    <div class="loader-content">
+        <h2 id="loader-text">Calibrating your feedback...</h2>
+        <p id="loader-subtext">Hold on tight!</p>
+    </div>
+</div>
+    
+    <div class="main">
+	<div class="info">
+		<div class="infoBox">
+			<span class="inter">Interview</span>
+			<span class="type" id="interviewType">Technical</span>
+			<span class="difficulty" id="difficulty">Hard</span>
+			<span class="noOfQuestions">Q <span id="currQuestionCount">2</span>/5</span>			
+		</div>
+	</div>
+        
+    <div class="aiManager">
+	
+		<div class="timer-badge" id="timerBadge" style="display: none;">
+        
+        <span id="timeDisplay">00:00</span>
+        </div>
+            <div id="avatarPulse" class="pulse-ring"></div>
+            <img src="https://media.gettyimages.com/id/2018929375/video/businessman-glasses-and-face-with-talking-for-virtual-interview-online-workshop-or-meeting-in.jpg?s=640x640&k=20&c=LwYObZyJm8NfEm6_63hM2mZdb_ojXiIZgc3LVYxwZqM=" alt="AI Manager" class="avatar-img">
+        	<span class="aiLebel">AI Hiring Manager</span>
+	</div>
+        
+        
+        <div class="questionCard">
+            <p class="Questions" id="questionDisplay">
+                Can you tell me about a time when you had to work closely with a cross-functional team to achieve a project goal? What was your approach to collaboration?
+            </p>
+        </div>
+
+        <div class="options">
+	<button class="speaker-Btn" id=speakerBtn onclick="SpeakerOn()">🔊</button>
+            <button class="start-Btn" id="startBtn" onclick="startInterview()">🎙️ Start Answering</button>
+            <button class="stop-Btn" id="endBtn" onclick="endInterview()">⏹ Stop Recording</button>
+	    
+        </div>
+	
+    </div>
+
+    <script src="../static/interview.js"></script>
+</body>
+</html>

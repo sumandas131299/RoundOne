@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width" , initial-scale="1.0">
+	<title>Feedback</title>
+	<link rel="stylesheet" href="../static/feedback.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<div id="loader-overlay" class="loader-overlay">
+	
+    <div class="ai-orb">
+        <!-- Inner Energy Core -->
+        <div class="orb-center"></div>
+        <!-- High-speed inner wave -->
+        <div class="wave wave-primary"></div>
+        <!-- Slower outer glow wave -->
+        <div class="wave wave-secondary"></div>
+        <!-- The boundary ring -->
+        <div class="orb-ring"></div>
+    </div>
+    <div class="loader-content">
+        <h2 id="loader-text">AI is evaluating...</h2>
+        <p id="loader-subtext">Hold on tight!</p>
+    </div>
+</div>
+    
+
+
+<body>
+	<div class ="main">
+		<h1>Performance Review</h1>
+		<span class="subline">Here is how you performed on this question</span>
+
+		<div class="scoreboard">
+    		<span class="score" id="overallScore">1.9</span> <!-- ADD ID -->
+    		<span class="score-label" id="scoreLabel">Need Work</span> <!-- ADD ID -->
+		</div>
+		<div class="transcript">
+    		<span class="transcript-label">Your Answer</span>
+    		<p class="transcript-text" id="transcriptText">"..."</p> <!-- ADD ID -->
+		</div>
+
+
+		<div class="feedback-grid">
+			
+			<div class="feedback-box">
+				
+				<div class="circle-chart" style="background: conic-gradient(#ef4444 20%, #f3f4f6 0);">
+                    		<div class="circle-inner">
+					2
+				</div>
+                		</div>
+				
+				<div class="card-content">
+                    			<h3>Answer Structure <span class="status-badge">NEEDS WORK</span></h3>
+                    			<p>The answer does not follow the STAR method. It identifies a vague situation but fails to provide a task...</p>
+                		</div>
+				
+			</div>
+
+			<div class="feedback-box">
+				
+
+
+				<div class="circle-chart" style="background: conic-gradient(#ef4444 20%, #f3f4f6 0);">
+                    		<div class="circle-inner">
+					2
+				</div>
+                		</div>
+                		<div class="card-content">
+                    			<h3>Answer Clarity <span class="status-badge">NEEDS WORK</span></h3>
+                    			<p>The answer is very difficult to understand. It lacks a clear narrative and ends abruptly.</p>
+                		</div>
+
+
+
+	
+			</div>
+			<div class="feedback-box">
+				<div class="circle-chart" style="background: conic-gradient(#ef4444 20%, #f3f4f6 0);">
+                    		<div class="circle-inner">
+					2
+				</div>
+                		</div>
+
+				<div class="card-content">
+                    		<h3>Communication <span class="status-badge">NEEDS WORK</span></h3>
+                    		<p>Sentence structure is broken, and ideas are not clearly articulated. Vocabulary is limited...</p>
+                		</div>
+
+
+
+			</div>
+			<div class="feedback-box">
+				
+				<div class="circle-chart" style="background: conic-gradient(#ef4444 20%, #f3f4f6 0);">
+                    		<div class="circle-inner">
+					1
+				</div>
+                		</div>
+				<div class="card-content">
+                    			<h3>JD Match <span class="status-badge">NEEDS WORK</span></h3>
+                    			<p>While the candidate mentions a 'stakeholder,' there is no evidence of cross-functional collaboration.</p>
+                		</div>
+				
+			</div>
+			
+		</div>
+		
+		<div class="footer-buttons">
+            		<a href="/interview" class="btn btn-primary">Next Question</a>
+            		<a  class="btn btn-outline" onclick="showPopUp()">Exit Interview</a>
+					<a  class="btn btn-outline-ai" onclick="aiAnswer()">Get Ai Answer</a>
+        	</div>	
+	</div>
+
+	<div class="popUpOverlay" style="display: none;">
+		<div class="popUpContent">
+			<button class="crossBtn">✖</button>
+			<h3>How was your experience</h3>
+			<p>Help us to make MOCKMATE better for you</p>
+
+			<div class=starRating>
+				<span class="star" data-value="1">★</span>
+				<span class="star" data-value="2">★</span>
+				<span class="star" data-value="3">★</span>
+				<span class="star" data-value="4">★</span>
+				<span class="star" data-value="5">★</span>
+			</div>
+			 <label>Current Career</label>
+			<select class="currentCareer" id="careerSelect" style="color: grey;">
+    				<option value="" disabled selected hidden>Who you are?</option>
+    				<option value="Fresher">Fresher</option>
+    				<option value="Switching">Switching</option>
+			</select>
+
+			<textarea class="userComment"  placeholder="How was your Ai feedback accuracy?"></textarea>
+			
+			<button class="submitBtn">Submit</button>
+			
+		</div>
+	</div>
+		<script src="../static/feedback.js"></script>
+</body>
+</html>

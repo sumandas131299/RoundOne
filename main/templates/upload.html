@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width", 		initial-scale="1.0">
+	<title>uploadPage</title>
+	<link rel="stylesheet"  href="../static/upload.css">
+	
+</head>
+<body>
+
+
+<div id="loader-overlay" class="loader-overlay">
+	
+    <div class="ai-orb">
+        <!-- Inner Energy Core -->
+        <div class="orb-center"></div>
+        <!-- High-speed inner wave -->
+        <div class="wave wave-primary"></div>
+        <!-- Slower outer glow wave -->
+        <div class="wave wave-secondary"></div>
+        <!-- The boundary ring -->
+        <div class="orb-ring"></div>
+    </div>
+    <div class="loader-content">
+        <h2 id="loader-text">AI is evaluating...</h2>
+        <p id="loader-subtext">Hold on tight!</p>
+    </div>
+</div>
+    
+
+<div class="main">
+	
+	<div class="heading">
+		<h1>Setup Your <span class="highlight">Interview</span></h1>
+	<h3>Upload your resume or job-description and configure your practice session</h3>
+	<div>
+
+	<div class="uploadBox">
+		<span class="uploadIcon">⬆️</span>
+		<div>
+			<strong>Drag & drop your Resume or JD</strong>
+                <br>
+                or <a href="#" class="browseLink">browse files</a>
+		</div>
+		<span class="fileTypes">PDF, DOC, DOCX, TXT</span>
+		<input type="file" id="fileInput" hidden accept=".pdf,.doc,.docx,.txt">
+	</div>
+
+	<div class="formRow">
+	
+		<div class="formColumn">
+			<label>Interview Type</label>
+			<select id="interviewType">
+				<option value="" disabled selected>Select Type</option>
+				<option value="Behavioral">Behavioral Type</option>
+				<option value="Technical">Technical</option>
+				<option value="mixed">Mixed</option>
+				<option value="Case-Study">Case-Study</option>
+			</select>
+		</div>
+		<div class="formColumn">
+			<label>Difficulty Type</label>
+			<select id="difficultyType">
+				<option value="" disabled selected>Select Type</option>
+				<option value="Hard">Hard</option>
+				<option value="Medium">Medium</option>
+				<option value="Easy">Easy</option>
+				<option value="Basic">Basic</option>
+			</select>
+		</div>		
+	
+	</div>
+	
+	<div class="tipsBox">
+		<div class="tipsTitle">💡 Interview Tips 
+		</div>
+		<ul class="tipsList">
+			<li>Use the <strong>STAR method</strong> — Situation, Task, Action, Result</li>
+                	<li>Maintain <strong>eye contact</strong> with the interviewer</li>
+                	<li>Keep your answers <strong>JD-focused</strong> and relevant</li>
+		</ul>
+	</div>
+	<button class="continueBtn" onclick="saveAndContinue()">Continue →</button>
+</div>
+
+<script src="../static/upload.js"></script>
+</body>
+</html>
