@@ -1,10 +1,15 @@
+import os
+
 from flask import Blueprint, json, jsonify,render_template, request
 from google import genai
 from google.genai import types
+from dotenv import load_dotenv
+
+load_dotenv() #loading the environment variables
 
 feedbackBp = Blueprint('feedback',__name__)
 
-GEMINI_API_KEY = "AIzaSyB7q_7Qna8rMs5gJ20HAjNiGJXoXd87DOY"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 @feedbackBp.route('/feedback')

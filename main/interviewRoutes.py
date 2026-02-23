@@ -4,9 +4,12 @@ import time
 from flask import Blueprint, json, render_template, request, jsonify
 from google import genai
 from google.genai import types
+from dotenv import load_dotenv
+
+load_dotenv() #loading the environment variables
 
 
-GEMINI_API_KEY = "AIzaSyB7q_7Qna8rMs5gJ20HAjNiGJXoXd87DOY"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 interviewBp = Blueprint('interview', __name__)
