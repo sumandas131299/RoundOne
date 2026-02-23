@@ -99,8 +99,8 @@ async function startInterview() {
         mediaRecorder.start();
         pulseRing.style.display = 'none';
 
-        seconds = 120; 
-        timeDisplay.innerText = "02:00";
+        seconds = 90; 
+        timeDisplay.innerText = "01:30";
         clearInterval(timerInterval);
         timerInterval = setInterval(updateTimer, 1000);
         
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function speakQuestion(text) {
     const speech = new SpeechSynthesisUtterance(text);
-    speech.lang = 'en-US';
+    speech.lang = 'en-GB';
     speech.rate = 0.9;
     
     pulseRing.style.display = 'block';

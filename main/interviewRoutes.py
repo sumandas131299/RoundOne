@@ -19,24 +19,7 @@ def interviewIndex():
     return render_template('interview.html')
 
 # NEW: Function to receive and save the audio in the root directory
-# def save_interview():
-    if 'audio_file' not in request.files:
-        return jsonify({"status": "error", "message": "No file received"}), 400
-
-    audio = request.files['audio_file']
-    data_type = request.form.get('type', 'interview')
-
-    # Save directly in the project root directory
-    # filename example: interview_1700000000.wav
-    filename = f"{data_type}_{int(time.time())}.wav"
-    file_path = os.path.join(os.getcwd(), filename)
-
-    audio.save(file_path)
-    
-    return jsonify({
-        "status": "success", 
-        "message": f"Saved as {filename} in project root"
-    }), 200
+   
 @interviewBp.route('/interview/save', methods=['POST'])
 def save_interview():
     audio = request.files.get('audio_file')
@@ -49,6 +32,10 @@ def save_interview():
     file_path = os.path.join(os.getcwd(), filename)
     audio.save(file_path)
 
+           
+
+
+           
     try:
         # 2. Upload to Gemini
 # Change 'path' to 'file'
@@ -82,8 +69,8 @@ def save_interview():
         The interview type is {i_type} and difficulty is {diff}.
         Evaluate based on: Answer Structure (STAR),Answer Clarity, Communication, and JD Match.
         Return the feedback in the specified JSON format.
-        And if the audio is blank or transcript is not readable, then return response according to that like "your said nothing" and score 0.
-        overall score should be out of 10.
+        And if the audio is blank or transcript is not readable, then return response according to that like "You Said Nothing" and score 0.
+        overall score should be out of 10 give a motivating score.
         """
 
         response = client.models.generate_content(

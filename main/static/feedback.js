@@ -64,48 +64,59 @@ submitBtn.addEventListener('click', () => {
 	
 });
 
-
+/**
+ * Helper: Returns color based on a 0-10 score scale
+ */
+function getScoreColor(score) {
+    if (score >= 8) return '#22c55e'; // Green
+    if (score >= 5) return '#caf50b'; // Orange/Yellow
+    return '#ee4b4b';                // Red
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const data = JSON.parse(sessionStorage.getItem('lastFeedback'));
     if (!data) return;
 
-    // Update main scores
+    const mainColor = getScoreColor(data.overall_score);
     document.querySelector('.score').innerText = data.overall_score;
     document.querySelector('.score-label').innerText = data.score_label;
+    // Apply background color to the label instead of just text
+    document.querySelector('.scoreboard').style.backgroundColor = mainColor;
+    document.querySelector('.score-label').style.color = "white";
     document.querySelector('.transcript-text').innerText = `"${data.transcript}"`;
 
-    // Update the 4 boxes (mapping the categories array)
     const boxes = document.querySelectorAll('.feedback-box');
     data.categories.forEach((cat, index) => {
         if (boxes[index]) {
             const box = boxes[index];
+            const catColor = getScoreColor(cat.score);
+
             box.querySelector('.circle-inner').innerText = cat.score;
+            
+            // Changing the box chart background color dynamically
             box.querySelector('.circle-chart').style.background = 
-                `conic-gradient(#ef4444 ${cat.percentage}%, #f3f4f6 0)`;
-            box.querySelector('h3').innerHTML = `${cat.title} <span class="status-badge">${cat.status}</span>`;
+                `conic-gradient(${catColor} ${cat.percentage}%, #f3f4f6 0)`;
+            
+            // Changing badge background color dynamically
+            box.querySelector('h3').innerHTML = `${cat.title} <span class="status-badge" style="background-color: ${catColor}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">${cat.status}</span>`;
             box.querySelector('p').innerText = cat.feedback;
         }
     });
 });
 
-
 async function aiAnswer() {
-    // Show a loading state if you want
     const btn = document.querySelector('.btn-outline-ai');
     const originalText = btn.innerText;
     btn.innerText = "Loading...";
 
-    // Get data from your session or page state
-    // Note: Ensure these variables match how you store question/type/diff
     const payload = new FormData();
-    payload.append('type', sessionStorage.getItem('interviewType')); // or dynamic value
+    payload.append('type', sessionStorage.getItem('interviewType')); 
     payload.append('difficulty', sessionStorage.getItem('difficulty')); 
     payload.append('question', sessionStorage.getItem('lastQuestion')); 
 
     try {
-        showLoader();
-        console.log("Sending to Flask:", payload);
+        if (typeof showLoader === "function") showLoader();
+        
         const response = await fetch('/feedback/save', {
             method: 'POST',
             body: payload
@@ -115,25 +126,34 @@ async function aiAnswer() {
 
         if (result.status === 'success') {
             const data = result.data;
+            const mainColor = getScoreColor(data.overall_score);
             
-            // Update the UI with AI results
             document.querySelector('.score').innerText = data.overall_score;
             document.querySelector('.score-label').innerText = data.score_label;
+            document.querySelector('.scoreboard').style.backgroundColor = mainColor;
+            document.querySelector('.score-label').style.color = "white";
             document.querySelector('.transcript-text').innerText = data.transcript;
 
-            // Update the 4 feedback boxes
             const boxes = document.querySelectorAll('.feedback-box');
             data.categories.forEach((cat, index) => {
                 if (boxes[index]) {
                     const box = boxes[index];
+                    const catColor = getScoreColor(cat.score);
+
                     box.querySelector('.circle-inner').innerText = cat.score;
+                    
+                    // Changing the box chart background color dynamically
                     box.querySelector('.circle-chart').style.background = 
-                        `conic-gradient(#ef4444 ${cat.percentage}%, #f3f4f6 0)`;
-                    box.querySelector('h3').innerHTML = `${cat.title} <span class="status-badge">${cat.status}</span>`;
+                        `conic-gradient(${catColor} ${cat.percentage}%, #f3f4f6 0)`;
+                    
+                    // Changing badge background color dynamically
+                    box.querySelector('h3').innerHTML = `${cat.title} <span class="status-badge" style="background-color: ${catColor}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">${cat.status}</span>`;
                     box.querySelector('p').innerText = cat.feedback;
                 }
             });
+
             document.getElementById('loader-overlay').style.display = 'none';
+            btn.style.display = 'none';  
         } else {
             alert("Error: " + result.message);
         }
@@ -143,7 +163,6 @@ async function aiAnswer() {
         btn.innerText = originalText;
     }
 }
-
 
 
 
