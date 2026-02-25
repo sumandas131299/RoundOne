@@ -69,7 +69,7 @@ submitBtn.addEventListener('click', () => {
  */
 function getScoreColor(score) {
     if (score >= 8) return '#22c55e'; // Green
-    if (score >= 5) return '#caf50b'; // Orange/Yellow
+    if (score >= 5) return '#f5d20b'; // Orange/Yellow
     return '#ee4b4b';                // Red
 }
 
@@ -172,7 +172,7 @@ function showLoader() {
     const subText = document.getElementById('loader-subtext');
 
     loader.style.display = 'flex';
-	startAiAudio(); // This triggers the browser-generated sound
+	//startAiAudio(); // This triggers the browser-generated sound
 
     // Optional: Dynamic text changes if the wait is long
     setTimeout(() => {

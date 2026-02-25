@@ -97,7 +97,7 @@ function showLoader() {
     const subText = document.getElementById('loader-subtext');
 
     loader.style.display = 'flex';
-	startAiAudio(); // This triggers the browser-generated sound
+	//startAiAudio(); // This triggers the browser-generated sound
 
     // Optional: Dynamic text changes if the wait is long
     setTimeout(() => {

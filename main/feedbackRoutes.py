@@ -57,13 +57,20 @@ def save_feedback():
             }
         }
 
+        # prompt = f"""
+        # Give a proper and appropriate answer for the interview question: '{question}'.
+        # The interview type is {i_type} and difficulty is {diff}.
+        # Evaluate based on: Answer Structure (STAR),Answer Clarity, Communication, and JD Match.
+        # Return the feedback in the specified JSON format.
+        # And if the audio is blank or transcript is not readable, then return response according to that like "your said nothing" and score 0.
+        # overall score should be out of 10.
+        # """
+
         prompt = f"""
-        Give a proper and appropriate answer for the interview question: '{question}'.
-        The interview type is {i_type} and difficulty is {diff}.
-        Evaluate based on: Answer Structure (STAR),Answer Clarity, Communication, and JD Match.
-        Return the feedback in the specified JSON format.
-        And if the audio is blank or transcript is not readable, then return response according to that like "your said nothing" and score 0.
-        overall score should be out of 10.
+        Question: "{question}" ({i_type}, {diff})
+
+        TASK: Provide a appropriate and proper answer for this question. 
+        OUTPUT: JSON ONLY score/10.
         """
 
         response = client.models.generate_content(

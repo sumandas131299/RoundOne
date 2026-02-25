@@ -50,65 +50,178 @@ function getAndRemoveNextQuestion() {
 
 // 2. Start Interview Function
 
-async function startInterview() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        audioChunks = []; 
+// async function startInterview() {
+//     try {
+//         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+//         mediaRecorder = new MediaRecorder(stream);
+//         audioChunks = []; 
 
-        mediaRecorder.ondataavailable = (event) => { audioChunks.push(event.data); };
+//         mediaRecorder.ondataavailable = (event) => { audioChunks.push(event.data); };
         
-        mediaRecorder.onstop = async () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+//         mediaRecorder.onstop = async () => {
+//             const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
             
-            const formData = new FormData();
-            // Matches 'audio_file' in your Python request.files
-            formData.append('audio_file', audioBlob, 'recording.wav'); 
-            formData.append('type', type); 
-            formData.append('difficulty', diff);
-            formData.append('question', nextQ);
+//             const formData = new FormData();
+//             // Matches 'audio_file' in your Python request.files
+//             formData.append('audio_file', audioBlob, 'recording.wav'); 
+//             formData.append('type', type); 
+//             formData.append('difficulty', diff);
+//             formData.append('question', nextQ);
 
-            try {
+//             try {
                 
-                showLoader();
-                // Pointing specifically to your interviewBp route
-                const response = await fetch('/interview/save', { 
-                    method: 'POST',
-                    body: formData
-                });
+//                 showLoader();
+//                 // Pointing specifically to your interviewBp route
+//                 const response = await fetch('/interview/save', { 
+//                     method: 'POST',
+//                     body: formData
+//                 });
 
-                if (response.ok) {
-                    const result = await response.json();
-                    // Save the AI's feedback data
-                    sessionStorage.setItem('lastQuestion', nextQ);
-                    sessionStorage.setItem('lastFeedback', JSON.stringify(result.data));
-                    window.location.href = '/feedback';
-                }
-            } catch (err) {
-                console.error("Upload failed:", err);
-                endBtn.innerText = "Retry Upload";
-            }
-        };
+//                 if (response.ok) {
+//                     const result = await response.json();
+//                     // Save the AI's feedback data
+//                     sessionStorage.setItem('lastQuestion', nextQ);
+//                     sessionStorage.setItem('lastFeedback', JSON.stringify(result.data));
+//                     window.location.href = '/feedback';
+//                 }
+//             } catch (err) {
+//                 console.error("Upload failed:", err);
+//                 endBtn.innerText = "Retry Upload";
+//             }
+//         };
 
-        // UI Updates
-        startBtn.style.display = 'none';
-        endBtn.style.display = 'block';
-        endBtn.innerText = "Recording..."; 
-        timerBadge.style.display = 'flex';
+//         // UI Updates
+//         startBtn.style.display = 'none';
+//         endBtn.style.display = 'block';
+//         endBtn.innerText = "Recording..."; 
+//         timerBadge.style.display = 'flex';
 
-        mediaRecorder.start();
-        pulseRing.style.display = 'none';
+//         mediaRecorder.start();
+//         pulseRing.style.display = 'none';
 
-        seconds = 90; 
-        timeDisplay.innerText = "01:30";
-        clearInterval(timerInterval);
-        timerInterval = setInterval(updateTimer, 1000);
+//         seconds = 90; 
+//         timeDisplay.innerText = "01:30";
+//         clearInterval(timerInterval);
+//         timerInterval = setInterval(updateTimer, 1000);
         
+//     } catch (err) {
+//         console.error("Error:", err);
+//         alert("Microphone access is required.");
+//     }
+// }
+
+let transcriptBuffer = ""; // Global variable to store the text
+let recognition;
+
+async function startInterview() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+        alert("Speech recognition not supported in this browser.");
+        return;
+    }
+
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = false; // Set to true if you want to see text live
+    transcriptBuffer = ""; // Reset buffer
+
+    recognition.onresult = (event) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            if (event.results[i].isFinal) {
+                transcriptBuffer += event.results[i][0].transcript + " ";
+            }
+        }
+    };
+
+    recognition.onend = async () => {
+        // This acts like mediaRecorder.onstop
+        sessionStorage.setItem('transcript', transcriptBuffer);
+        console.log("Transcript:", transcriptBuffer);
+        await sendTranscriptToServer();
+    };
+
+    // UI Updates
+    startBtn.style.display = 'none';
+    endBtn.style.display = 'block';
+    endBtn.innerText = "Listening..."; 
+    timerBadge.style.display = 'flex';
+
+    recognition.start();
+    
+    // Timer logic remains the same
+    seconds = 90; 
+    timeDisplay.innerText = "01:30";
+    clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimer, 1000);
+}
+
+function endInterview() {
+    if (recognition) {
+        recognition.stop(); // This triggers recognition.onend
+    }
+    clearInterval(timerInterval);
+    endBtn.innerText = "Processing Text...";
+    endBtn.disabled = true;
+}
+
+async function sendTranscriptToServer() {
+    const formData = new FormData();
+    // Sending text instead of a blob
+    formData.append('transcript', transcriptBuffer); 
+    formData.append('type', type); 
+    formData.append('difficulty', diff);
+    formData.append('question', nextQ);
+
+    try {
+        showLoader();
+        const response = await fetch('/interview/save', { 
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            sessionStorage.setItem('lastQuestion', nextQ);
+            sessionStorage.setItem('lastFeedback', JSON.stringify(result.data));
+            window.location.href = '/feedback';
+        }
     } catch (err) {
-        console.error("Error:", err);
-        alert("Microphone access is required.");
+        console.error("Upload failed:", err);
+        endBtn.innerText = "Retry Upload";
+        endBtn.disabled = false;
     }
 }
+
+
+
+
+// function endInterview() {
+//     if (mediaRecorder && mediaRecorder.state !== "inactive") {
+//         mediaRecorder.stop();
+//     }
+    
+//     clearInterval(timerInterval);
+//     pulseRing.style.display = 'none';
+//     endBtn.innerText = "Processing...";
+//     endBtn.disabled = true;
+
+//     setTimeout(() => {
+//         alert("Recording saved and playing back!");
+//     }, 1500);
+// }
+
+function updateTimer() {
+    seconds--;
+    if (seconds <= 0) {
+        endInterview();
+        return;
+    }
+    const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const secs = (seconds % 60).toString().padStart(2, '0');
+    timeDisplay.innerText = `${mins}:${secs}`;
+}
+
 
 
 
@@ -126,34 +239,6 @@ async function SpeakerOn() {
     await new Promise(resolve => setTimeout(resolve, 8000));
     pulseRing.style.display = 'none';
 }
-
-function endInterview() {
-    if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        mediaRecorder.stop();
-    }
-    
-    clearInterval(timerInterval);
-    pulseRing.style.display = 'none';
-    endBtn.innerText = "Processing...";
-    endBtn.disabled = true;
-
-    setTimeout(() => {
-        alert("Recording saved and playing back!");
-    }, 1500);
-}
-
-function updateTimer() {
-    seconds--;
-    if (seconds <= 0) {
-        endInterview();
-        return;
-    }
-    const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const secs = (seconds % 60).toString().padStart(2, '0');
-    timeDisplay.innerText = `${mins}:${secs}`;
-}
-
-
 // Define this globally so all functions see the SAME question
 let nextQ = getAndRemoveNextQuestion();
 
@@ -197,7 +282,7 @@ function showLoader() {
     const subText = document.getElementById('loader-subtext');
 
     loader.style.display = 'flex';
-	startAiAudio(); // This triggers the browser-generated sound
+	//startAiAudio(); // This triggers the browser-generated sound
 
     // Optional: Dynamic text changes if the wait is long
     setTimeout(() => {

@@ -20,17 +20,26 @@ def interviewIndex():
 
 # NEW: Function to receive and save the audio in the root directory
    
+@interviewBp.route('/interview/s', methods=['POST'])
+def save_audio():
+    transcript = request.form.get('transcript')
+    print(transcript)
+    return jsonify({"status": "success", "message": "Audio saved successfully"}), 200
+
+
 @interviewBp.route('/interview/save', methods=['POST'])
 def save_interview():
-    audio = request.files.get('audio_file')
+   # audio = request.files.get('audio_file')
+    transcript = request.form.get('transcript')
+    print("transcript:", transcript)
     i_type = request.form.get('type')
     diff = request.form.get('difficulty')
     question = request.form.get('question')
 
     # 1. Save File Temporarily
-    filename = f"{i_type}_{int(time.time())}.wav"
-    file_path = os.path.join(os.getcwd(), filename)
-    audio.save(file_path)
+    # filename = f"{i_type}_{int(time.time())}.wav"
+    # file_path = os.path.join(os.getcwd(), filename)
+    # audio.save(file_path)
 
            
 
@@ -39,7 +48,7 @@ def save_interview():
     try:
         # 2. Upload to Gemini
 # Change 'path' to 'file'
-        gemini_file = client.files.upload(file=file_path)
+        # gemini_file = client.files.upload(file=file_path)
 
         # 3. Precise Schema for your HTML
         response_schema = {
@@ -64,19 +73,30 @@ def save_interview():
             }
         }
 
+        # prompt = f"""
+        # Listen to the answer audio for the interview question: '{question}'.
+        # The interview type is {i_type} and difficulty is {diff}.
+        # Evaluate based on: Answer Structure (STAR),Answer Clarity, Communication, and JD Match.
+        # Return the feedback in the specified JSON format.
+        # And if answer audio is not readable or transcript is not readable, then return response according to that like "You Said Nothing" and score 0 
+        # and dont give any demo answer , just check and give the score.
+        # overall score should be out of 10 give a motivating score.
+        # """
+
         prompt = f"""
-        Listen to the answer audio for the interview question: '{question}'.
-        The interview type is {i_type} and difficulty is {diff}.
-        Evaluate based on: Answer Structure (STAR),Answer Clarity, Communication, and JD Match.
-        Return the feedback in the specified JSON format.
-        And if answer audio is not readable or transcript is not readable, then return response according to that like "You Said Nothing" and score 0 
-        and dont give any demo answer , just check and give the score.
-        overall score should be out of 10 give a motivating score.
+        Evaluate {transcript} for {i_type} interview ({diff} difficulty). 
+Question: "{question}"
+
+CRITICAL: If transcript is empty/unreadable/only noise/only timestamps, return a score of 0 and transcript = "You Said Nothing" and STOP.
+
+Criteria: STAR structure, Clarity, Communication, JD Match.
+Output: JSON only. Score /10 (be motivating).
         """
 
+
         response = client.models.generate_content(
-            model="gemini-2.5-flash-lite",
-            contents=[gemini_file, prompt],
+            model="gemini-2.5-flash-lite", # Use the latest stable flash model
+            contents=[ prompt],
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
                 response_schema=response_schema
@@ -84,7 +104,7 @@ def save_interview():
         )
 
         # 4. Clean up
-        os.remove(file_path)
+        # os.remove(file_path)
         
         # 5. Return data to frontend
         feedback_data = json.loads(response.text)
