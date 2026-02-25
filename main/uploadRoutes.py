@@ -44,7 +44,7 @@ def process_upload():
 
         # 4. Generate content using JSON mode for reliable parsing
         response = client.models.generate_content(
-            model="gemini-3-flash-preview", # Use the latest stable flash model
+            model="gemini-2.5-flash-lite", # Use the latest stable flash model
             contents=[gemini_file, prompt],
             config=types.GenerateContentConfig(
                 response_mime_type="application/json"

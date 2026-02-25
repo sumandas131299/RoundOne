@@ -65,16 +65,17 @@ def save_interview():
         }
 
         prompt = f"""
-        Listen to the audio answer for the interview question: '{question}'.
+        Listen to the answer audio for the interview question: '{question}'.
         The interview type is {i_type} and difficulty is {diff}.
         Evaluate based on: Answer Structure (STAR),Answer Clarity, Communication, and JD Match.
         Return the feedback in the specified JSON format.
-        And if the audio is blank or transcript is not readable, then return response according to that like "You Said Nothing" and score 0.
+        And if answer audio is not readable or transcript is not readable, then return response according to that like "You Said Nothing" and score 0 
+        and dont give any demo answer , just check and give the score.
         overall score should be out of 10 give a motivating score.
         """
 
         response = client.models.generate_content(
-            model="gemini-3-flash-preview",
+            model="gemini-2.5-flash-lite",
             contents=[gemini_file, prompt],
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
