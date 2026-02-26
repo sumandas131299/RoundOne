@@ -104,6 +104,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+function nextQuestion() {
+    sessionStorage.setItem('lastFeedback', null);
+    sessionStorage.setItem('lastQuestion', null);
+    window.location.href = '/interview';
+}
+
 async function aiAnswer() {
     const btn = document.querySelector('.btn-outline-ai');
     const originalText = btn.innerText;

@@ -83,14 +83,15 @@ def save_interview():
         # overall score should be out of 10 give a motivating score.
         # """
 
+        #CRITICAL: If transcript is empty/unreadable/only noise/only timestamps, return a score of 0 and transcript = "You Said Nothing" and STOP.
+
+
         prompt = f"""
         Evaluate {transcript} for {i_type} interview ({diff} difficulty). 
 Question: "{question}"
 
-CRITICAL: If transcript is empty/unreadable/only noise/only timestamps, return a score of 0 and transcript = "You Said Nothing" and STOP.
-
 Criteria: STAR structure, Clarity, Communication, JD Match.
-Output: JSON only. Score /10 (be motivating).
+Output: JSON only. Score /10.
         """
 
 

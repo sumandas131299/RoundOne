@@ -36,11 +36,17 @@ def process_upload():
         gemini_file = client.files.upload(file=temp_path)
 
         # 3. Create the prompt
+        # prompt = (
+        #     f"Based on the attached resume, generate exactly 5 interview questions "
+        #     f"for a {i_type} interview at a {diff} difficulty level. "
+        #     f"Return the output as a JSON object with a key 'questions' containing a list of strings."
+        # )
+
         prompt = (
-            f"Based on the attached resume, generate exactly 5 interview questions "
-            f"for a {i_type} interview at a {diff} difficulty level. "
-            f"Return the output as a JSON object with a key 'questions' containing a list of strings."
-        )
+    f"Resume: [Attached]\n"
+    f"Context: 5 {i_type} questions, {diff} difficulty.\n"
+    f"Format: JSON {{'questions': ['...']}}"
+)
 
         # 4. Generate content using JSON mode for reliable parsing
         response = client.models.generate_content(

@@ -112,10 +112,11 @@ function getAndRemoveNextQuestion() {
 
 let transcriptBuffer = ""; // Global variable to store the text
 let recognition;
+let isManualStop = false; // New flag to track manual clicks
 
 async function startInterview() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
+    isManualStop = false;
     if (!SpeechRecognition) {
         alert("Speech recognition not supported in this browser.");
         return;
@@ -124,6 +125,7 @@ async function startInterview() {
     recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = false; // Set to true if you want to see text live
+    recognition.lang = 'en-IN';
     transcriptBuffer = ""; // Reset buffer
 
     recognition.onresult = (event) => {
@@ -136,9 +138,20 @@ async function startInterview() {
 
     recognition.onend = async () => {
         // This acts like mediaRecorder.onstop
+        if (!isManualStop) {
+            console.log("Silence detected, restarting recognition...");
+            recognition.start(); // Keep listening!
+            return; 
+        }
+
         sessionStorage.setItem('transcript', transcriptBuffer);
         console.log("Transcript:", transcriptBuffer);
-        await sendTranscriptToServer();
+        if (transcriptBuffer.trim().length > 0 && transcriptBuffer !== " ") {
+            await sendTranscriptToServer(); // This triggers recognition.onend
+        }else{
+            window.location.href = '/feedback';
+        }
+        
     };
 
     // UI Updates
@@ -158,6 +171,7 @@ async function startInterview() {
 
 function endInterview() {
     if (recognition) {
+        isManualStop = true;
         recognition.stop(); // This triggers recognition.onend
     }
     clearInterval(timerInterval);
@@ -182,7 +196,7 @@ async function sendTranscriptToServer() {
 
         if (response.ok) {
             const result = await response.json();
-            sessionStorage.setItem('lastQuestion', nextQ);
+            
             sessionStorage.setItem('lastFeedback', JSON.stringify(result.data));
             window.location.href = '/feedback';
         }
@@ -241,6 +255,7 @@ async function SpeakerOn() {
 }
 // Define this globally so all functions see the SAME question
 let nextQ = getAndRemoveNextQuestion();
+sessionStorage.setItem('lastQuestion', nextQ);
 
 document.addEventListener('DOMContentLoaded', () => {
     if (nextQ) {
