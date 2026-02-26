@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width", 		initial-scale="1.0">
 	<title>uploadPage</title>
 	<link rel="stylesheet"  href="../static/upload.css">
-	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
@@ -37,7 +37,7 @@
 	<div>
 
 	<div class="uploadBox">
-		<span class="uploadIcon">⬆️</span>
+		<span class="uploadIcon"><i class="fa-solid fa-arrow-up-from-bracket"></i></span>
 		<div>
 			<strong>Drag & drop your Resume or JD</strong>
                 <br>
@@ -53,27 +53,27 @@
 			<label>Interview Type</label>
 			<select id="interviewType">
 				<option value="" disabled selected>Select Type</option>
-				<option value="Behavioral">Behavioral Type</option>
-				<option value="Technical">Technical</option>
-				<option value="mixed">Mixed</option>
-				<option value="Case-Study">Case-Study</option>
+				<option value="Personal">Personal Interview</option>
+				<option value="Behavioral">Behavioral Interview</option>
+				<option value="Technical">Technical Interview</option>
+				<option value="CaseStudy">Case Interview</option>
+				<option value="Stress">Stress Interview</option>
 			</select>
 		</div>
 		<div class="formColumn">
-			<label>Difficulty Type</label>
+			<label>Difficulty Level</label>
 			<select id="difficultyType">
 				<option value="" disabled selected>Select Type</option>
 				<option value="Hard">Hard</option>
 				<option value="Medium">Medium</option>
 				<option value="Easy">Easy</option>
-				<option value="Basic">Basic</option>
 			</select>
 		</div>		
 	
 	</div>
 	
 	<div class="tipsBox">
-		<div class="tipsTitle">💡 Interview Tips 
+		<div class="tipsTitle"><i class="fa-regular fa-lightbulb"></i> Interview Tips 
 		</div>
 		<ul class="tipsList">
 			<li>Use the <strong>STAR method</strong> — Situation, Task, Action, Result</li>
@@ -81,7 +81,7 @@
                 	<li>Keep your answers <strong>JD-focused</strong> and relevant</li>
 		</ul>
 	</div>
-	<button class="continueBtn" onclick="saveAndContinue()">Continue →</button>
+	<button class="continueBtn" onclick="saveAndContinue()">Start Interview</button>
 </div>
 
 <script src="../static/upload.js"></script>

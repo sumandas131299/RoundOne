@@ -157,7 +157,7 @@ async function startInterview() {
     // UI Updates
     startBtn.style.display = 'none';
     endBtn.style.display = 'block';
-    endBtn.innerText = "Listening..."; 
+     
     timerBadge.style.display = 'flex';
 
     recognition.start();

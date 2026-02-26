@@ -135,43 +135,65 @@ h1{
 
         /* --- Action Buttons --- */
         .footer-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center; /* Ensures all buttons align vertically */
+}
 
-        .btn {
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: transform 0.2s;
-        }
+.btn {
+    /* Standardized flex centering for icons and text */
+    display: inline-flex; 
+    align-items: center;
+    justify-content: center;
+    
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s;
+    border: none;
+    box-sizing: border-box; /* Prevents padding from breaking size */
+}
 
-        .btn:hover { transform: translateY(-2px); }
+.btn:hover { transform: translateY(-2px); }
 
-        .btn-primary {
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4);
-        }
+/* Circle Sign-out Button */
+.btn-outline {
+    background-color: #fbd6d6;
+    color: #ff0021;
+    border: 1px solid #d1d5db;
+    width: 45px;  /* Fixed equal width and height */
+    height: 45px; 
+    border-radius: 50%; /* Perfect circle */
+    padding: 0; /* Remove padding to keep icon centered */
+}
 
-        .btn-outline {
-            background-color: white;
-            color: #374151;
-            border: 1px solid #d1d5db;
-        }
-        .btn-outline-ai {
-            background-color: white;
-            color: #374151;
-            border: 1px solid #d1d5db;
-        }
+/* Capsule (Pill) Buttons */
+.btn-primary, .btn-outline-ai {
+    padding: 12px 30px;
+    height: 45px; /* Match height of the circle button */
+    border-radius: 999px; /* Large value creates capsule shape */
+}
+
+.btn-primary {
+    background-color: #2563eb;
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4);
+}
+
+.btn-outline-ai {
+    background-color: white;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
         /* Mobile Responsive */
         @media (max-width: 600px) {
             .feedback-grid {
                 grid-template-columns: 1fr; /* Stack cards on phone */
+            }
+            .btn-outline{
+                width:100px;
             }
         }
 
@@ -279,7 +301,7 @@ h1{
     font-weight: 600;
     cursor: pointer;
     margin-bottom: 20px;
-	width:380px;
+	width:300px;
 }
 
 
