@@ -176,19 +176,48 @@ function showLoader() {
     const loader = document.getElementById('loader-overlay');
     const mainText = document.getElementById('loader-text');
     const subText = document.getElementById('loader-subtext');
+    const fill = document.getElementById('progress-fill');
+    const status = document.getElementById('progress-status');
 
     loader.style.display = 'flex';
-	//startAiAudio(); // This triggers the browser-generated sound
+    //startAiAudio();
 
-    // Optional: Dynamic text changes if the wait is long
+    const circumference = 283; // 2 * PI * 45
+    let progress = 0;
+    
+    const updateProgress = (target, duration) => {
+        // Calculate the offset for the circle
+        const offset = circumference - (target / 100) * circumference;
+        fill.style.strokeDashoffset = offset;
+
+        let start = progress;
+        let interval = setInterval(() => {
+            if (start >= target) clearInterval(interval);
+            status.innerText = Math.floor(start) + "%";
+            start++;
+        }, duration / (target - progress));
+        progress = target;
+    };
+
+    // Phase 1: Initial jump
     setTimeout(() => {
-        mainText.innerText = "Generating personalized feedback...";
-	subText.innerText = "Processing according to expert insights...";
+        updateProgress(35, 1000);
+        mainText.innerText = "Analyzing your Data...";
+        subText.innerText = "Almost there!..";
+    }, 1500);
+
+    // Phase 2: The "Thinking" crawl
+    setTimeout(() => {
+        updateProgress(62, 3000);
+        mainText.innerText = "AI is thinking through...";
+        subText.innerText = "Preparing your challenge...";
     }, 7000);
-	
-setTimeout(() => {
-        mainText.innerText = "Hang tight, we're generating pro answer...";
-	subText.innerText = "Here we go...";
+
+    // Phase 3: The "Infinite" limit
+    setTimeout(() => {
+        updateProgress(95, 5000);
+        mainText.innerText = "Finalizing insights...";
+        subText.innerText = "Polishing the results...";
     }, 14000);
 }
 

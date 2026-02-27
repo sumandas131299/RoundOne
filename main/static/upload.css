@@ -128,121 +128,114 @@ select:focus {
 }
 
 
-
-/*-----------Loader Animation-----------*/
-
-@keyframes robotic-flicker {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    95% { opacity: 0.8; transform: scale(1.02) skewX(1deg); }
-    97% { opacity: 1; transform: scale(0.98) skewX(-1deg); }
+/* Container centered and widened */
+.progress-container {
+    width: 250px; 
+    height: 250px;
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* Remove any background or border that creates a square look */
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
 }
 
-.ai-orb {
-    /* ... existing styles ... */
-    animation: robotic-flicker 3s infinite; /* Occasional digital "twitch" */
+.circular-progress {
+    position: relative;
+    width: 40%;
+    height: 40%;
+    background: transparent;
 }
 
+.circular-progress svg {
+    transform: rotate(-90deg); /* Starts the fill at the top */
+    width: 100%;
+    height: 100%;
+    display: block; /* Prevents tiny alignment gaps */
+    overflow: visible; /* Allows the glow to expand outside the SVG box */
+}
 
+/* The background track */
+.progress-track {
+    fill: none;
+    stroke: rgba(0, 0, 0, 0.05); /* Very light gray for visibility on white background */
+    stroke-width: 5; 
+}
 
-/* --- THE DARK PREMIUM ENVIRONMENT --- */
+/* The filling bar with a glowing head */
+.progress-fill {
+    fill: none;
+    stroke: blue; /*This is handled in HTML for SVG but I hard coded to blue commented in html SVG linear Gradient */
+    stroke-width: 7; /* Slightly thicker than the track for a premium feel */
+    stroke-linecap: round;
+    stroke-dasharray: 283; 
+    stroke-dashoffset: 283; 
+    transition: stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    /* Filter creates the glow that makes it look organic */
+    filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.5)); 
+}
+
+/* Percentage text styling */
+.progress-status {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Inter', sans-serif;
+    color: #3b82f6;
+    font-size: 1.2rem; /* Adjusted for impact */
+    font-weight: 800;
+    letter-spacing: -1px; /* Modern tight spacing */
+}
+
+/* Ensure the overlay is a perfect center */
 .loader-overlay {
+    display: none; 
     position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: white; /* Darkest blue-black */
-    display: none; /* Set to 'flex' via JS */
+    inset: 0;
+    background: white; 
     flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 10000;
-    font-family: 'Inter', sans-serif;
 }
 
-/* --- THE ORB CONTAINER --- */
-.ai-orb {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 40px;
-}
 
-/* The Fixed Outer Glowing Ring */
-.orb-ring {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 1px solid rgba(59, 130, 246, 0.4);
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
-}
-
-/* The Central Pulsing Core */
-.orb-center {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    background: #fff;
-    border-radius: 50%;
-    filter: blur(8px);
-    box-shadow: 0 0 40px 10px #3b82f6;
-    z-index: 10;
-    animation: core-breath 2s ease-in-out infinite;
-}
-
-/* --- THE WAVES (The "Flabbergasting" Part) --- */
-.wave {
-    position: absolute;
-    width: 180px;
-    height: 180px;
-    border-radius: 43% 57% 41% 59% / 57% 45% 55% 43%; /* Organic "blob" shape */
-    filter: blur(10px);
-}
-
-/* Cyan/Turquoise Liquid Layer */
-.wave-primary {
-    background: linear-gradient(45deg, #06b6d4 0%, transparent 70%);
-    animation: liquid-rotate 4s linear infinite;
-    opacity: 0.7;
-}
-
-/* Magenta/Purple Liquid Layer */
-.wave-secondary {
-    background: linear-gradient(135deg, #8b5cf6 0%, transparent 70%);
-    animation: liquid-rotate 7s linear infinite reverse;
-    opacity: 0.5;
-}
 
 /* --- TEXT STYLING --- */
 .loader-content {
     text-align: center;
+	margin-top: -70px;
 }
 
 #loader-text {
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: 800;
     color: #fff;
     letter-spacing: 3px;
     margin: 0;
     text-transform: uppercase;
     /* Shimmer effect on text */
-    background: linear-gradient(90deg, #fff, #3b82f6, #fff);
+    background:black; /*linear-gradient(90deg, #fff, #3b82f6, #fff);*/
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: text-shine 3s linear infinite;
+    /* animation: text-shine 3s linear infinite; */
 }
 
 #loader-subtext {
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     color: #94a3b8;
     margin-top: 10px;
     font-weight: 500;
     letter-spacing: 5px;
     opacity: 0.6;
 }
+
+/* linear-gradient(90deg, #8b5cf6, #3b82f6, #06b6d4);*/
 
 /* --- ANIMATIONS --- */
 
@@ -261,4 +254,3 @@ select:focus {
 @keyframes text-shine {
     to { background-position: 200% center; }
 }
-

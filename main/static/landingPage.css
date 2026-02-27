@@ -227,20 +227,63 @@ body {
 }
 
 /* 8. FOOTER */
+/* General Footer Styles */
 .footer {
-    margin-top: auto;
-    padding: 30px 20px;
-    text-align: center;
-    font-size: 0.85rem;
-    color: #6b7280;
-    width: 100%;
+ /* A clean, modern font */
+  padding: 40px 5%;
+  width: 100%;
+  color: #667085; /* Soft grey text */
+
 }
 
-.footer a {
-    color: #2563eb;
-    text-decoration: none;
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
+/* Logo Styling */
+.footer-logo {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.footer-logo .mock { color: #101828; } /* Bold Black */
+.footer-logo .mate { color: #2e66d4; } /* The Blue Brand color */
+
+/* Links Styling */
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: right;
+  margin-top: 60px;;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: #667085;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: #2e66d4;
+}
+
+/* Divider & Bottom Section */
+.footer-divider {
+  border: 0;
+  border-top: 1px solid #eaecf0;
+  margin-bottom: 25px;
+}
+
+.footer-bottom {
+  text-align: center;
+  font-size: 14px;
+  color: #98a2b3;
+}
 /* --- MOBILE SPECIFIC (Pixel 7 / 600px) --- */
 @media (max-width: 600px) {
     .main h1 {
@@ -263,6 +306,9 @@ body {
     }
 
     .faq {
-        width: 95%;
+        width: 85%;
+    }
+    .footer-links{
+        margin-top:60px;
     }
 }

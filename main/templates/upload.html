@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width", 		initial-scale="1.0">
-	<title>uploadPage</title>
+	<title>MI-uploadPage</title>
 	<link rel="stylesheet"  href="../static/upload.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -11,23 +11,34 @@
 
 
 <div id="loader-overlay" class="loader-overlay">
-	
-    <div class="ai-orb">
-        <!-- Inner Energy Core -->
-        <div class="orb-center"></div>
-        <!-- High-speed inner wave -->
-        <div class="wave wave-primary"></div>
-        <!-- Slower outer glow wave -->
-        <div class="wave wave-secondary"></div>
-        <!-- The boundary ring -->
-        <div class="orb-ring"></div>
+   <div class="progress-container">
+    <div class="circular-progress">
+        <svg viewBox="0 0 100 100" style="background: none;">
+            <defs>
+              <!--  <linearGradient id="ai-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#8b5cf6" />
+                    <stop offset="50%" stop-color="#3b82f6" />
+                    <stop offset="100%" stop-color="#06b6d4" />
+                </linearGradient> -->
+
+            </defs>
+            <!-- The background track -->
+            <circle class="progress-track" cx="50" cy="50" r="45"></circle>
+            <!-- The filling bar -->
+            <circle id="progress-fill" class="progress-fill" cx="50" cy="50" r="45" stroke="url(#ai-gradient)"></circle>
+        </svg>
+        <div id="progress-status" class="progress-status">0%</div>
     </div>
+    </div>
+
+
+
     <div class="loader-content">
         <h2 id="loader-text">AI is evaluating...</h2>
         <p id="loader-subtext">Hold on tight!</p>
     </div>
 </div>
-    
+
 
 <div class="main">
 	
@@ -37,7 +48,8 @@
 	<div>
 
 	<div class="uploadBox">
-		<span class="uploadIcon"><i class="fa-solid fa-arrow-up-from-bracket"></i></span>
+
+    		<span class="uploadIcon"><i class="fa-solid fa-arrow-up-from-bracket"></i></span>
 		<div>
 			<strong>Drag & drop your Resume or JD</strong>
                 <br>
