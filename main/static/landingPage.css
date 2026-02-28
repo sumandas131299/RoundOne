@@ -18,6 +18,7 @@ body {
 
 /* 2. NAVIGATION - Fixed the margin-left overflow */
 .navLogo {
+    gap:73%;
     display: flex;
     padding: 15px 20px; /* Use padding instead of margin-left */
     width: 100%;
@@ -90,9 +91,8 @@ body {
     display: inline-block;
     box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4);
     margin-top: 10px;
-    left:75%;
-    position: relative;
-    margin-right: 20px;
+    
+    
 }
 /* 4. BUTTONS */
 .tryBtn {
@@ -182,7 +182,7 @@ body {
     margin-right: 0;
 } */
 
-.test-text {
+/* .test-text {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -192,7 +192,7 @@ body {
     font-weight: 600;
     pointer-events: none;
     white-space: nowrap;
-}
+} */
 
 .test-label {
     margin-top: 10px;
@@ -313,9 +313,11 @@ body {
     
     .navLogo {
         padding: 10px 15px;
+        display: flex;
+        gap:28%;
     }
     .toptryBtn{
-        left:30%;
+        
         height: 42px;
         text-align: center;
         font-size: 0.8rem;

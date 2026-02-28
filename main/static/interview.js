@@ -254,7 +254,7 @@ async function SpeakerOn() {
     speech.voice = maleVoice;
     speech.lang = 'en-GB';
     speech.rate = 0.8;  // Slow, professional pace
-    speech.pitch = 0.5; 
+    //speech.pitch = 0.5; 
     
     window.speechSynthesis.speak(speech);
 	
@@ -294,7 +294,7 @@ function speakQuestion(text) {
     speech.voice = maleVoice;
     speech.lang = 'en-GB';
     speech.rate = 0.8;  // Slow, professional pace
-    speech.pitch = 0.5; 
+    //speech.pitch = 0.5; 
     
     window.speechSynthesis.speak(speech);
     

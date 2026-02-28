@@ -139,6 +139,7 @@ async function aiAnswer() {
             document.querySelector('.scoreboard').style.backgroundColor = mainColor;
             document.querySelector('.score-label').style.color = "white";
             document.querySelector('.transcript-text').innerText = data.transcript;
+            document.querySelector('h1').innerText = "Your Pro Answer";
 
             const boxes = document.querySelectorAll('.feedback-box');
             data.categories.forEach((cat, index) => {
