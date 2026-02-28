@@ -79,7 +79,7 @@ body {
     color: #4b5563;
 }
 .toptryBtn {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
     padding: 15px 30px;
     border-radius: 8px;
@@ -320,7 +320,7 @@ body {
         
         height: 42px;
         text-align: center;
-        font-size: 0.8rem;
+        font-size: 0.6rem;
         
     }
     .tryBtn {
