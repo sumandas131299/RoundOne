@@ -77,7 +77,23 @@ body {
     padding: 10px;
     color: #4b5563;
 }
-
+.toptryBtn {
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding: 15px 30px;
+    border-radius: 8px;
+    border: none;
+    background-color: blue;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s;
+    display: inline-block;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4);
+    margin-top: 10px;
+    left:75%;
+    position: relative;
+    margin-right: 20px;
+}
 /* 4. BUTTONS */
 .tryBtn {
     font-size: 1.2rem;
@@ -156,7 +172,7 @@ body {
     margin-right: -15px;
 }
 
-.last-img-container {
+/* .last-img-container {
     position: relative;
     display: inline-block;
 }
@@ -164,7 +180,7 @@ body {
 .last-img-container img {
     filter: blur(2px) brightness(0.7);
     margin-right: 0;
-}
+} */
 
 .test-text {
     position: absolute;
@@ -298,7 +314,13 @@ body {
     .navLogo {
         padding: 10px 15px;
     }
-
+    .toptryBtn{
+        left:30%;
+        height: 42px;
+        text-align: center;
+        font-size: 0.8rem;
+        
+    }
     .tryBtn {
         width: 100%; /* Full width button on mobile */
         max-width: 300px;

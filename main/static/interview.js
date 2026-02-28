@@ -245,8 +245,17 @@ async function SpeakerOn() {
 
     const questionText = document.getElementById('questionDisplay').innerText || nextQ ;
     const speech = new SpeechSynthesisUtterance(questionText);
+    const voices = window.speechSynthesis.getVoices();
+    
+    const maleVoice = voices.find(v => v.name.includes('David')) || 
+                      voices.find(v => v.name.toLowerCase().includes('male')) || 
+                      voices[0];
+
+    speech.voice = maleVoice;
     speech.lang = 'en-GB';
-    speech.rate = 0.9;
+    speech.rate = 0.8;  // Slow, professional pace
+    speech.pitch = 0.5; 
+    
     window.speechSynthesis.speak(speech);
 	
     // Wait for the duration of speech
@@ -276,8 +285,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function speakQuestion(text) {
     const speech = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    
+    const maleVoice = voices.find(v => v.name.includes('David')) || 
+                      voices.find(v => v.name.toLowerCase().includes('male')) || 
+                      voices[0];
+
+    speech.voice = maleVoice;
     speech.lang = 'en-GB';
-    speech.rate = 0.9;
+    speech.rate = 0.8;  // Slow, professional pace
+    speech.pitch = 0.5; 
+    
+    window.speechSynthesis.speak(speech);
     
     pulseRing.style.display = 'block';
     
