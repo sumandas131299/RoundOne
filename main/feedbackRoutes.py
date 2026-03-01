@@ -1,12 +1,21 @@
+from datetime import datetime
 import os
 
 from flask import Blueprint, json, jsonify,render_template, request
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
-from openpyxl import Workbook, load_workbook 
+from openpyxl import Workbook, load_workbook
+from pymongo import MongoClient 
 
 FILE_NAME = 'cx_reviews.xlsx'
+
+MONGO_URI = os.getenv("MONGO_URI") # Best practice: put this in your .env file
+client = MongoClient(MONGO_URI)
+db = client['mirrorInterview_db']
+collection = db['reviews']
+
+
 load_dotenv() #loading the environment variables
 
 feedbackBp = Blueprint('feedback',__name__)
@@ -98,37 +107,22 @@ def save_feedback():
 
 
 
-
-
 @feedbackBp.route('/feedback/save_review', methods=['POST'])
-def save_review_excel():
+def save_review_mongo():
     try:
         data = request.json
-        career = data.get('career')
-        rating = data.get('rating')
-        comment = data.get('comment')
-
-        # Check if file exists to determine if we need to create it or load it
-        if os.path.exists(FILE_NAME):
-            wb = load_workbook(FILE_NAME)
-            ws = wb.active
-        else:
-            wb = Workbook()
-            ws = wb.active
-            # Add Headers for a new file
-            ws.append(["Date", "Time","Career", "Rating", "Comment"])
-
-        # Append the data row
-        from datetime import datetime
         now = datetime.now()
-        current_date = now.strftime("%Y-%m-%d")
-        current_time = now.strftime("%H:%M:%S")
-        ws.append([ current_date, current_time , career, rating, comment])
         
-        wb.save(FILE_NAME)
-        return jsonify({"status": "success", "message": "Feedback saved to Excel"})
-    
-    except PermissionError:
-        return jsonify({"status": "error", "message": "Excel file is open. Please close it!"}), 500
+        review_doc = {
+            "date": now.strftime("%Y-%m-%d"),
+            "time": now.strftime("%H:%M:%S"),
+            "career": data.get('career'),
+            "rating": data.get('rating'),
+            "comment": data.get('comment')
+        }
+
+        collection.insert_one(review_doc)
+        print(review_doc)
+        return jsonify({"status": "success", "message": "Review saved to Cloud!"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500

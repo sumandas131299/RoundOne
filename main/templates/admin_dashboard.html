@@ -8,9 +8,9 @@
         .header { display: flex; justify-content: space-between; align-items: center; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
         th, td { padding: 12px; text-align: left; border: 1px solid #ddd; }
-        th { background-color: #333; color: white; }
+        th { background-color: #002fff; color: white; }
         .btn { padding: 10px 15px; text-decoration: none; border-radius: 5px; cursor: pointer; border: none; }
-        .btn-download { background: #28a745; color: white; }
+        .btn-download {  background: #0077ff; color: white; }
         .btn-delete { background: #dc3545; color: white; }
     </style>
 </head>
@@ -35,20 +35,20 @@
         </tr>
     </thead>
     <tbody>
-        {% for row in reviews %}
-        <tr>
-            <td>{{ row[0] }}</td>
-            <td>{{ row[1] }}</td>
-            <td>{{ row[2] }}</td>
-            <td>{{ row[3] }} / 5</td>
-            <td>{{ row[4] }}</td>
-        </tr>
-        {% else %}
-        <tr>
-            <td colspan="5" style="text-align: center;">No feedback data found.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+    {% for row in reviews %}
+    <tr>
+        <td>{{ row.date }}</td>
+        <td>{{ row.time }}</td>
+        <td>{{ row.career }}</td>
+        <td>{{ row.rating }} / 5</td>
+        <td>{{ row.comment }}</td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="5" style="text-align: center;">No reviews found in Database.</td>
+    </tr>
+    {% endfor %}
+</tbody>
 </table>
 
 <script>
