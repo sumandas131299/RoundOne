@@ -7,7 +7,10 @@ def create_app():
     from .uploadRoutes import uploadBp
     from .interviewRoutes import interviewBp
     from .feedbackRoutes import feedbackBp
+    from .adminRoutes import adminBp
 
+
+    app.register_blueprint(adminBp)
     app.register_blueprint(feedbackBp)
     app.register_blueprint(interviewBp)
     app.register_blueprint(landingBp)

@@ -4,7 +4,9 @@ from flask import Blueprint, json, jsonify,render_template, request
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
+from openpyxl import Workbook, load_workbook 
 
+FILE_NAME = 'cx_reviews.xlsx'
 load_dotenv() #loading the environment variables
 
 feedbackBp = Blueprint('feedback',__name__)
@@ -92,4 +94,41 @@ def save_feedback():
 
     except Exception as e:
         print(f"Error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+
+
+
+@feedbackBp.route('/feedback/save_review', methods=['POST'])
+def save_review_excel():
+    try:
+        data = request.json
+        career = data.get('career')
+        rating = data.get('rating')
+        comment = data.get('comment')
+
+        # Check if file exists to determine if we need to create it or load it
+        if os.path.exists(FILE_NAME):
+            wb = load_workbook(FILE_NAME)
+            ws = wb.active
+        else:
+            wb = Workbook()
+            ws = wb.active
+            # Add Headers for a new file
+            ws.append(["Date", "Time","Career", "Rating", "Comment"])
+
+        # Append the data row
+        from datetime import datetime
+        now = datetime.now()
+        current_date = now.strftime("%Y-%m-%d")
+        current_time = now.strftime("%H:%M:%S")
+        ws.append([ current_date, current_time , career, rating, comment])
+        
+        wb.save(FILE_NAME)
+        return jsonify({"status": "success", "message": "Feedback saved to Excel"})
+    
+    except PermissionError:
+        return jsonify({"status": "error", "message": "Excel file is open. Please close it!"}), 500
+    except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500

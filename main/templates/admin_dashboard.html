@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - Feedback Management</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; background: #f4f7f6; }
+        .header { display: flex; justify-content: space-between; align-items: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { padding: 12px; text-align: left; border: 1px solid #ddd; }
+        th { background-color: #333; color: white; }
+        .btn { padding: 10px 15px; text-decoration: none; border-radius: 5px; cursor: pointer; border: none; }
+        .btn-download { background: #28a745; color: white; }
+        .btn-delete { background: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Feedback Log</h1>
+    <div>
+        <a href="/admin/download" class="btn btn-download">Download .xlsx</a>
+        <button onclick="clearData()" class="btn btn-delete">Delete All Records</button>
+    </div>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Career</th>
+            <th>Rating</th>
+            <th>Comment</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in reviews %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }} / 5</td>
+            <td>{{ row[4] }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5" style="text-align: center;">No feedback data found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    function clearData() {
+        if (confirm("Are you sure you want to permanently delete all feedback records?")) {
+            fetch('/admin/clear-data', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                location.reload();
+            });
+        }
+    }
+</script>
+
+</body>
+</html>
