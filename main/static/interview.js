@@ -237,6 +237,16 @@ function updateTimer() {
 }
 
 
+// Function to handle the male voice selection
+function getMaleVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    return voices.find(v => 
+        v.name.includes('Male') || 
+        v.name.includes('David') || 
+        v.name.includes('Alex') ||
+        v.name.includes('Google UK English Male')
+    );
+}
 
 
 // 3. FIXED: Added 'async' to SpeakerOn so 'await' works
@@ -245,17 +255,17 @@ async function SpeakerOn() {
 
     const questionText = document.getElementById('questionDisplay').innerText || nextQ ;
     const speech = new SpeechSynthesisUtterance(questionText);
-    const voices = window.speechSynthesis.getVoices();
-    
-    const maleVoice = voices.find(v => v.name.includes('David')) || 
-                      voices.find(v => v.name.toLowerCase().includes('male')) || 
-                      voices[0];
+    const maleVoice = getMaleVoice();
 
-    speech.voice = maleVoice;
+     if (maleVoice) {
+        speech.voice = maleVoice;
+    } else {
+        // Fallback: Lower the pitch if no male voice is found
+        speech.pitch = 0.7; 
+    }
+
     speech.lang = 'en-GB';
-    speech.rate = 0.8;  // Slow, professional pace
-    //speech.pitch = 0.5; 
-    
+    speech.rate = 1;
     window.speechSynthesis.speak(speech);
 	
     // Wait for the duration of speech
@@ -285,18 +295,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function speakQuestion(text) {
     const speech = new SpeechSynthesisUtterance(text);
-    const voices = window.speechSynthesis.getVoices();
     
-    const maleVoice = voices.find(v => v.name.includes('David')) || 
-                      voices.find(v => v.name.toLowerCase().includes('male')) || 
-                      voices[0];
+    const maleVoice = getMaleVoice();
+     if (maleVoice) {
+        speech.voice = maleVoice;
+    } else {
+        // Fallback: Lower the pitch if no male voice is found
+        speech.pitch = 0.7; 
+    }
 
-    speech.voice = maleVoice;
     speech.lang = 'en-GB';
-    speech.rate = 0.8;  // Slow, professional pace
+    speech.rate = 1;
+    window.speechSynthesis.speak(speech);
     //speech.pitch = 0.5; 
     
-    window.speechSynthesis.speak(speech);
     
     pulseRing.style.display = 'block';
     
@@ -306,7 +318,6 @@ function speakQuestion(text) {
         // Optional: startInterview(); // Uncomment if you want auto-start
     };
 
-    window.speechSynthesis.speak(speech);
 }
 
 

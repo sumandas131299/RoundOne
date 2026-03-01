@@ -10,3 +10,20 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+const tryBtn = document.querySelector('.tryBtn');
+const toptryBtn = document.querySelector('.toptryBtn');
+
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (!entry.isIntersecting) {
+            toptryBtn.style.display ='inline-block';
+            
+        } else {
+            toptryBtn.style.display = 'none';
+        }
+    });
+}, {
+    threshold: 0.9 // Adjust the threshold as needed (0 to 1)
+});
+
+observer.observe(tryBtn)

@@ -18,10 +18,13 @@ body {
 
 /* 2. NAVIGATION - Fixed the margin-left overflow */
 .navLogo {
-    gap:73%;
+    
     display: flex;
-    padding: 15px 20px; /* Use padding instead of margin-left */
+    padding: 10px 15px; /* Use padding instead of margin-left */
     width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
     text-align: left;
     position: sticky;
     top: 0;
@@ -79,7 +82,9 @@ body {
     color: #4b5563;
 }
 .toptryBtn {
-    font-size: 1.1rem;
+    font-size: 1rem;
+    text-align: center;
+    width: fit-content;
     font-weight: 600;
     padding: 15px 30px;
     border-radius: 8px;
@@ -88,9 +93,8 @@ body {
     color: white;
     text-decoration: none;
     transition: all 0.3s;
-    display: inline-block;
+    display: none;
     box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4);
-    margin-top: 10px;
     
     
 }
@@ -266,7 +270,7 @@ body {
 }
 
 .footer-logo .mock { color: #101828; } /* Bold Black */
-.footer-logo .mate { color: #2e66d4; } /* The Blue Brand color */
+.footer-logo .mate { color: blue; } /* The Blue Brand color */
 
 /* Links Styling */
 .footer-links {
@@ -318,7 +322,6 @@ body {
     }
     .toptryBtn{
         
-        height: 42px;
         text-align: center;
         font-size: 0.6rem;
         
