@@ -280,7 +280,33 @@ document.addEventListener('DOMContentLoaded', () => {
     if (nextQ) {
         document.getElementById('questionDisplay').innerText = nextQ;
         document.getElementById('currQuestionCount').innerText = count;
-        document.getElementById('interviewType').innerText = type;
+        // if (type.includes('Standard Introductory/HR')) { 
+        //     document.getElementById('interviewType').innerText = "HR"; 
+        // } else if (type.includes('Behavioral (STAR method)')) { 
+        //     document.getElementById('interviewType').innerText = "Behavioral"; 
+        // } else if (type.includes('Technical (Skill-based)')) { 
+        //     document.getElementById('interviewType').innerText = "Technical"; 
+        // } else if (type.includes('Case Study (Problem Solving)')) { 
+        //     document.getElementById('interviewType').innerText = "Case Study"; 
+        // } else if (type.includes('Stress (High Pressure)')) { 
+        //     document.getElementById('interviewType').innerText = "Stress"; 
+        // } else { 
+        //     document.getElementById('interviewType').innerText = "Interview"; 
+        // }
+
+        const interviewMap = {
+            'Standard Introductory/HR': 'HR',
+            'Behavioral (STAR method)': 'Behavioral',
+            'Technical (Skill-based)': 'Technical',
+            'Case Study (Problem Solving)': 'Case Study',
+            'Stress (High Pressure)': 'Stress'
+        };
+
+        // Find the key that is contained within the 'type' string
+        const matchedKey = Object.keys(interviewMap).find(key => type.includes(key));
+
+        document.getElementById('interviewType').innerText = matchedKey ? interviewMap[matchedKey] : "Interview";
+
         document.getElementById('difficulty').innerText = diff;
         // Wrap speech in a user interaction if possible, 
         // or keep your timeout and check the console for "Interrupted" errors
