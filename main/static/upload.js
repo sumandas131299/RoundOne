@@ -60,6 +60,7 @@ async function saveAndContinue() {
     sessionStorage.setItem('interviewType', type);
     sessionStorage.setItem('difficulty', diff);
     sessionStorage.setItem('fileName', uploadedFile.name); // Save name to show on next page
+    sessionStorage.setItem('file',uploadedFile); 
 
      // 1. Create FormData object
     const formData = new FormData();
@@ -78,7 +79,7 @@ async function saveAndContinue() {
         const data = await response.json();
         if (data.status === "success") {
     // Save the array of questions for the next page
-        sessionStorage.setItem('interviewQuestions', JSON.stringify(data.questions));
+        sessionStorage.setItem('firstQuestion', JSON.stringify(data.first_question));
         console.log("Success:", JSON.stringify(data.questions));
     // Redirect to the interview screen
         window.location.href = "/interview";
@@ -87,6 +88,43 @@ async function saveAndContinue() {
         console.error("Error:", error);
     } 
 }
+
+const interviewSelect = document.getElementById('interviewType');
+const difficultySelect = document.getElementById('difficultyType');
+// Target the label specifically for the second dropdown
+const secondLabel = difficultySelect.previousElementSibling;
+
+const mapping = {
+    "Technical (Skill-based)": {
+        label: "Technical Focus",
+        options: ["DSA", "LLD", "System Design"]
+    },
+    "Case Study (Problem Solving)": {
+        label: "Case Category",
+        options: ["Product Sense", "Guesstimates", "Market Entry"]
+    },
+    "default": {
+        label: "Difficulty Level",
+        options: ["Hard", "Medium", "Easy", "Basic"]
+    }
+};
+
+interviewSelect.addEventListener('change', function() {
+    const selected = mapping[this.value] || mapping["default"];
+    
+    // 1. Change the Label Text
+    secondLabel.textContent = selected.label;
+    
+    // 2. Clear and Rebuild the Options
+    difficultySelect.innerHTML = '<option value="" disabled selected>Select Type</option>';
+    
+    selected.options.forEach(opt => {
+        const el = document.createElement('option');
+        el.value = opt;
+        el.textContent = opt;
+        difficultySelect.appendChild(el);
+    });
+});
 
 
 

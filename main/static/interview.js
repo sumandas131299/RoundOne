@@ -2,7 +2,6 @@ let timerInterval;
 let seconds = 0;
 let mediaRecorder; 
 let audioChunks = []; 
-let count = parseInt(sessionStorage.getItem('currQCount')) || 0; 
 
 const startBtn = document.getElementById('startBtn');
 const endBtn = document.getElementById('endBtn');
@@ -148,7 +147,10 @@ async function startInterview() {
         console.log("Transcript:", transcriptBuffer);
         if (transcriptBuffer.trim().length > 0 && transcriptBuffer !== " ") {
             await sendTranscriptToServer(); // This triggers recognition.onend
+            
         }else{
+            // sessionStorage.setItem('transcript', "...");
+            // await sendTranscriptToServer(); 
             window.location.href = '/feedback';
         }
         
@@ -177,18 +179,48 @@ function endInterview() {
     clearInterval(timerInterval);
     endBtn.innerText = "Processing Text...";
     endBtn.disabled = true;
+    seconds = 0;
+    timeDisplay.innerText = "00:00";
 }
+
+// async function sendTranscriptToServer() {
+//     const formData = new FormData();
+//     // Sending text instead of a blob
+//     formData.append('transcript', transcriptBuffer); 
+//     formData.append('type', type); 
+//     formData.append('difficulty', diff);
+//     formData.append('question', nextQ);
+
+//     try {
+//         showLoader();
+//         const response = await fetch('/interview/save', { 
+//             method: 'POST',
+//             body: formData
+//         });
+
+//         if (response.ok) {
+//             const result = await response.json();
+            
+//             sessionStorage.setItem('lastFeedback', JSON.stringify(result.data));
+//             window.location.href = '/feedback';
+//         }
+//     } catch (err) {
+//         console.error("Upload failed:", err);
+//         endBtn.innerText = "Retry Upload";
+//         endBtn.disabled = false;
+//     }
+// }
 
 async function sendTranscriptToServer() {
     const formData = new FormData();
-    // Sending text instead of a blob
     formData.append('transcript', transcriptBuffer); 
     formData.append('type', type); 
     formData.append('difficulty', diff);
-    formData.append('question', nextQ);
+    formData.append('question', nextQ); // Send the question the user just answered
 
     try {
-        showLoader();
+        showLoader(); // Show the loading overlay
+        
         const response = await fetch('/interview/save', { 
             method: 'POST',
             body: formData
@@ -197,17 +229,43 @@ async function sendTranscriptToServer() {
         if (response.ok) {
             const result = await response.json();
             
-            sessionStorage.setItem('lastFeedback', JSON.stringify(result.data));
-            window.location.href = '/feedback';
+            // 1. Check if the interview is complete
+            if (result.status === "complete") {
+                // If the backend says complete, store feedback and redirect
+                sessionStorage.setItem('lastFeedback', JSON.stringify(result.data));
+                window.location.href = '/feedback';
+                return;
+            }
+
+            // 2. If not complete, update the screen with the NEXT question from AI
+            nextQ = result.reply; // AI's next live question/follow-up
+            document.getElementById('questionDisplay').innerText = nextQ;
+            
+            // Update the question counter
+            count++;
+            document.getElementById('currQuestionCount').innerText = count;
+            sessionStorage.setItem('currQCount', count);
+
+            // 3. Reset the UI Buttons so the user can click "Start" again
+            const loader = document.getElementById('loader-overlay');
+            loader.style.display = 'none'; // Close loader
+            
+            timerBadge.style.display = 'none'; // Hide old timer
+            startBtn.style.display = 'block';  // Show Start button for Q2
+            endBtn.style.display = 'none';    // Hide Stop button
+            endBtn.disabled = false;          // Re-enable for the next click
+            endBtn.innerText = "⏹ Stop Answering";
+
+            // 4. Have the AI speak the new question
+            speakQuestion(nextQ);
+
         }
     } catch (err) {
-        console.error("Upload failed:", err);
+        console.error("Communication failed:", err);
         endBtn.innerText = "Retry Upload";
         endBtn.disabled = false;
     }
 }
-
-
 
 
 // function endInterview() {
@@ -273,8 +331,8 @@ async function SpeakerOn() {
     pulseRing.style.display = 'none';
 }
 // Define this globally so all functions see the SAME question
-let nextQ = getAndRemoveNextQuestion();
-sessionStorage.setItem('lastQuestion', nextQ);
+let nextQ = sessionStorage.getItem('firstQuestion'); 
+let count = parseInt(sessionStorage.getItem('currQCount')) || 1;
 
 document.addEventListener('DOMContentLoaded', () => {
     if (nextQ) {

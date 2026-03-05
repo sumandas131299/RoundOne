@@ -23,7 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Apply background color to the label instead of just text
     document.querySelector('.scoreboard').style.backgroundColor = mainColor;
     document.querySelector('.score-label').style.color = "white";
-    document.querySelector('.transcript-text').innerText = sessionStorage.getItem('transcript');
+    //document.querySelector('.transcript-text').innerText = sessionStorage.getItem('transcript');
+    document.querySelector('.transcript-text').innerText = data.overall_feedback;
     //document.querySelector('.transcript-text').innerText = `"${data.transcript}"`;
 
     const boxes = document.querySelectorAll('.feedback-box');
@@ -79,7 +80,7 @@ async function aiAnswer() {
             document.querySelector('.score-label').innerText = data.score_label;
             document.querySelector('.scoreboard').style.backgroundColor = mainColor;
             document.querySelector('.score-label').style.color = "white";
-            document.querySelector('.transcript-text').innerText = data.transcript;
+            document.querySelector('.transcript-text').innerText = data.overall_feedback;
             document.querySelector('h1').innerText = "Your Pro Answer";
 
             const boxes = document.querySelectorAll('.feedback-box');
