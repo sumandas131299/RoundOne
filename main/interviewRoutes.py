@@ -125,7 +125,15 @@ def save_interview():
 
     # 1. Grab the existing recruiter session
     chat_session = active_interviews.get(session_id)
-    print(chat_session)
+    
+    # Print the directory of the object to see what's available
+    # Instead of chat_session.history, use:
+    history = chat_session.get_history()
+
+    if history:
+        print(f"Total messages so far: {len(history)}")
+        for message in history:
+            print(f"{message.role}: {message.parts[0].text}")
     if not chat_session:
         return jsonify({"error": "Session expired or not found"}), 400
 
@@ -179,7 +187,12 @@ def save_interview():
 
             # Cleanup session
             del active_interviews[session_id]
+            return jsonify({
+                "status": "complete",
+                "data": json.loads(response.text)
+            })
 
+        print(response.text)
         # 4. Return the AI's next question/follow-up
         return jsonify({
             "status": "success", 

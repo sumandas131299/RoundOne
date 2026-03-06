@@ -143,16 +143,19 @@ async function startInterview() {
             return; 
         }
 
-        sessionStorage.setItem('transcript', transcriptBuffer);
+        
         console.log("Transcript:", transcriptBuffer);
         if (transcriptBuffer.trim().length > 0 && transcriptBuffer !== " ") {
-            await sendTranscriptToServer(); // This triggers recognition.onend
+            sessionStorage.setItem('transcript', transcriptBuffer);
             
         }else{
             // sessionStorage.setItem('transcript', "...");
             // await sendTranscriptToServer(); 
-            window.location.href = '/feedback';
+           // window.location.href = '/feedback';
+           sessionStorage.setItem('transcript', '...');
+           transcriptBuffer= "no answer"
         }
+        await sendTranscriptToServer(); // This triggers recognition.onend
         
     };
 
@@ -330,12 +333,86 @@ async function SpeakerOn() {
     await new Promise(resolve => setTimeout(resolve, 8000));
     pulseRing.style.display = 'none';
 }
+
+// --- Global Drag Variables ---
+let active = false, currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+const dragItem = document.getElementById("draggableCamera");
+
+// --- 1. Start Live Camera Feed ---
+let localStream = null; // Store the stream globally to stop it later
+
+async function startLiveCamera() {
+    const video = document.getElementById('webcam');
+
+    // If localStream exists, we want to STOP it
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop()); // Kill hardware connection
+        video.srcObject = null;
+        localStream = null;
+        console.log("Camera Off");
+        document.getElementById('draggableCamera').style.display = 'none';
+    } 
+    // If localStream is null, we want to START it
+    else {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            video.srcObject = stream;
+            localStream = stream; // Save it so we can stop it later
+            console.log("Camera On");
+            document.getElementById('draggableCamera').style.display = 'block';
+        } catch (err) {
+            console.warn("Camera access blocked or not found.", err);
+        }
+    }
+}
+
+// --- 2. Drag Logic Functions ---
+function dragStart(e) {
+    let clientX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
+    let clientY = e.type === "touchstart" ? e.touches[0].clientY : e.clientY;
+    
+    initialX = clientX - xOffset;
+    initialY = clientY - yOffset;
+
+    if (e.target === dragItem || dragItem.contains(e.target)) {
+        active = true;
+    }
+}
+
+function drag(e) {
+    if (active) {
+        e.preventDefault();
+        let clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
+        let clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
+
+        currentX = clientX - initialX;
+        currentY = clientY - initialY;
+        xOffset = currentX;
+        yOffset = currentY;
+
+        dragItem.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+    }
+}
+
+function dragEnd() { active = false; }
+
+
 // Define this globally so all functions see the SAME question
 let nextQ = sessionStorage.getItem('firstQuestion'); 
 let count = parseInt(sessionStorage.getItem('currQCount')) || 1;
 
 document.addEventListener('DOMContentLoaded', () => {
+        //startLiveCamera();
+
+        // ENABLE DRAGGING
+        document.addEventListener("mousedown", dragStart);
+        document.addEventListener("mousemove", drag);
+        document.addEventListener("mouseup", dragEnd);
+        document.addEventListener("touchstart", dragStart, {passive: false});
+        document.addEventListener("touchmove", drag, {passive: false});
+        document.addEventListener("touchend", dragEnd);
     if (nextQ) {
+        nextQ = nextQ.replace(/\\n/g, '\n');
         document.getElementById('questionDisplay').innerText = nextQ;
         document.getElementById('currQuestionCount').innerText = count;
         // if (type.includes('Standard Introductory/HR')) { 
@@ -368,11 +445,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('difficulty').innerText = diff;
         // Wrap speech in a user interaction if possible, 
         // or keep your timeout and check the console for "Interrupted" errors
+        
+        
+        
         setTimeout(() => {
             speakQuestion(nextQ);
         }, 2000);
     } else {
-        alert("No more questions! Redirecting to feedback...");
+        //alert("No more questions! Redirecting to feedback...");
         //window.location.href = '/feedback';
     }
 });

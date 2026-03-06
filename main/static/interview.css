@@ -181,10 +181,47 @@ button:hover {
     display: none; /* Hidden by default */
 }
 
+.camera-preview {
+    position: fixed; /* Changed to fixed to float over screen */
+    top: 15px;
+    right: 15px;
+    width: 200px; /* Adjusted to a cleaner 16:10 ratio */
+    height: 125px;
+    border-radius: 12px;
+    border: 2px solid #fff;
+    overflow: hidden;
+    background: #000;
+    /* Removed thick white border, added soft shadow for depth */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    z-index: 2000;
+    cursor: grab;
+    touch-action: none;
+}
+
+.camera-preview:active { 
+    cursor: grabbing; 
+}
+
+#webcam {
+    width: 100.5%; /* Slight overshoot to kill white edge bleed */
+    height: 100.5%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scaleX(-1); /* Mirror effect */
+    border: none;
+    outline: none;
+}
+
 
 
 /* --- MOBILE OPTIMIZATION (600px and below) --- */
 @media (max-width: 600px) {
+    .camera-preview{
+        width:130px;
+        height:80px ;
+    }
     .infoBox {
         width: 92vw;
         height: auto;
