@@ -17,7 +17,7 @@ body{
 	align-items:center;
 }
 .heading h1{
-	text-align: center;
+	text-align: LEFT;
 	justify-content:center;	
 }
 .highlight{

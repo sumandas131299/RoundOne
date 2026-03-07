@@ -100,7 +100,7 @@ const mapping = {
         options: ["DSA", "LLD", "System Design"]
     },
     "Case Study (Problem Solving)": {
-        label: "Case Category",
+        label: "Case Focus",
         options: ["Product Sense", "Guesstimates", "Market Entry"]
     },
     "default": {

@@ -114,11 +114,11 @@ body {
 }
 
 .questionCard {
-	margin-top:-170px;
+	margin-top:-130px;
 	z-index:1000;
     background: white;
         border-radius: 12px;
-    max-width: 600px;
+    max-width: 800px;
     text-align: center;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
     margin-bottom:20px;
@@ -136,7 +136,7 @@ body {
 /* Button Container */
 .options {
 	gap:20px;
-	margin-top:80px;
+	margin-top:50px;
 	margin-bottom:10px;
     display: flex;
     justify-content: center;
@@ -265,7 +265,7 @@ button:hover {
 
     .questionCard {
         margin-top: -30px; /* Reduced pull-up to keep image visible */
-        width: 85vw;
+        width: 75vw;
         padding: 20px 15px;
         box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     }

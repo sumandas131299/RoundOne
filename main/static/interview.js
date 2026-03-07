@@ -351,6 +351,7 @@ async function startLiveCamera() {
         localStream = null;
         console.log("Camera Off");
         document.getElementById('draggableCamera').style.display = 'none';
+        document.getElementById('cameraBtn').innerHTML = '<i class="fa fa-video-slash"></i>';
     } 
     // If localStream is null, we want to START it
     else {
@@ -360,6 +361,7 @@ async function startLiveCamera() {
             localStream = stream; // Save it so we can stop it later
             console.log("Camera On");
             document.getElementById('draggableCamera').style.display = 'block';
+            document.getElementById('cameraBtn').innerHTML = '<i class="fa fa-video"></i>';
         } catch (err) {
             console.warn("Camera access blocked or not found.", err);
         }
