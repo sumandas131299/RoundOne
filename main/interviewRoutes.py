@@ -1,5 +1,7 @@
+import base64
 import os
 import time
+
 
 from flask import Blueprint, json, render_template, request, jsonify
 from google import genai
@@ -117,6 +119,7 @@ def save_audio():
 #         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+# Assuming deepgram_client is initialized globally
 
 @interviewBp.route('/interview/save', methods=['POST'])
 def save_interview():
@@ -162,7 +165,7 @@ def save_interview():
     try:
         # 2. Send the user's spoken answer to the existing chat
         response = chat_session.send_message(transcript)
-        
+        ai_text = response.text
         # 3. Handle Completion logic
         if "INTERVIEW_COMPLETE" in response.text.upper():
             
@@ -192,11 +195,15 @@ def save_interview():
                 "data": json.loads(response.text)
             })
 
+       
+
         print(response.text)
         # 4. Return the AI's next question/follow-up
         return jsonify({
+             
             "status": "success", 
-            "reply": response.text 
+            "reply": ai_text
+            
         })
 
     except Exception as e:

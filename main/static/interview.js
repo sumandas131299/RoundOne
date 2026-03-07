@@ -261,8 +261,8 @@ async function sendTranscriptToServer() {
 
             // 4. Have the AI speak the new question
             speakQuestion(nextQ);
-
         }
+        
     } catch (err) {
         console.error("Communication failed:", err);
         endBtn.innerText = "Retry Upload";
