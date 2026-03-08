@@ -91,7 +91,7 @@ def process_upload():
     system_prompt = f"""
     You are a Senior Recruiter. Conduct a {diff} {i_type} interview.
     1. Use the attached resume as context.
-    2. Ask exactly 5 questions, one at a time.
+    2. Ask exactly 3 questions, one at a time.
     3. If the user is vague, ask a follow-up. 
     4. After the 5th answer, say: 'INTERVIEW_COMPLETE'.
     """

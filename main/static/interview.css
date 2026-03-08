@@ -227,7 +227,6 @@ button:hover {
         height: auto;
         padding: 12px;
         flex-direction: row;
-        
         justify-content: left;
         gap: 8px;
         box-sizing: border-box;
@@ -276,12 +275,16 @@ button:hover {
     }
 
     .options {
-        flex-direction: column; /* Stack buttons for thumb-tapping */
+         /* Stack buttons for thumb-tapping */
         width: 100%;
         gap: 12px;
         margin-top: 25px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
     }
-
+    .options > *:nth-child(n+3) {
+        grid-column: span 2;           /* Makes them fill both columns */
+    }
     button {
         width: 100%; /* Easy to click on Pixel 7 */
         padding: 15px;
