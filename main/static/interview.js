@@ -13,6 +13,15 @@ const type = sessionStorage.getItem('interviewType');
 const diff = sessionStorage.getItem('difficulty');
 
 
+document.querySelector('.exitBtn').addEventListener('click', function() {
+    if (confirm("Are you sure you want to exit the interview?")) {
+        transcriptBuffer="END The Interview and give Feedback";
+        sessionStorage.setItem('transcript', transcriptBuffer);
+        sendTranscriptToServer();
+    }
+});
+
+
 function getAndRemoveNextQuestion() {
     // 1. Get the string from storage
     const storedData = sessionStorage.getItem('interviewQuestions');

@@ -20,14 +20,15 @@ body {
     flex-direction: column;
     align-items: center;
     font-family: sans-serif;
-    background-image: linear-gradient(135deg, #ffffff, #c4e4ff);
+        	background-image: linear-gradient(135deg, #ffffff, #e7f4ff); /* Light background color from image */
+
     min-height: 100vh;
     width: 100%;
 }
 
 /* 2. NAVIGATION - Fixed the margin-left overflow */
 .navLogo {
-    
+    font-family: calistomt;
     display: flex;
     padding: 10px 15px; /* Use padding instead of margin-left */
     width: 100%;
@@ -60,6 +61,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+.Btns{
+    display:flex;
+    gap: 10px;
 }
 
 .Top {
@@ -119,15 +124,34 @@ body {
     text-decoration: none;
     transition: all 0.3s;
     display: inline-block;
-    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 4px 6px -1px rgba(65, 65, 65, 0.4);
     margin-top: 10px;
 }
 
 .tryBtn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.6);
+    box-shadow: 0 6px 8px -1px rgba(80, 80, 80, 0.6);
+}
+.seeInActionBtn {
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 00;
+    padding: 15px 30px;
+    border-radius: 8px;
+    border: 1px solid #747474;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    transition: all 0.3s;
+    display: inline-block;
+    box-shadow: 0 px 6px -1px rgba(107, 107, 107, 0.4);
+    margin-top: 10px;
 }
 
+.seeInActionBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px -1px rgba(56, 56, 56, 0.6);
+}
 /* 5. FEATURES SECTION */
 .features {
     display: flex;
@@ -161,7 +185,7 @@ body {
 }
 
 /* 6. TESTIMONIALS */
-.testimonials {
+/* .testimonials {
     width: 100%;
     margin-top: 40px;
     display: flex;
@@ -183,7 +207,7 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     border: 2px solid white;
     margin-right: -15px;
-}
+} */
 
 /* .last-img-container {
     position: relative;
@@ -208,7 +232,7 @@ body {
 } */
 
 .test-label {
-    margin-top: 10px;
+    margin-top: -30px;
     font-size: 0.8rem;
     font-weight: 500;
 }
@@ -259,6 +283,7 @@ body {
 /* General Footer Styles */
 .footer {
  /* A clean, modern font */
+  font-family: calistomt;
   padding: 40px 5%;
   width: 100%;
   color: #667085; /* Soft grey text */
@@ -318,7 +343,29 @@ body {
     margin-top: 50px;
     text-align: center;
     background: #ffffff;
+    align-items: center;
+    justify-content: center;
 }
+.btn-container{
+    display:flex;
+    flex-direction: column;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+}
+.btn-container button{
+    
+    background-color: #2563eb;
+    color: white;
+    font-weight:600;
+}
+.btn-container span{
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom:10px;
+
+}
+
 .section-header{
     text-align: center;
     margin: 30px 0;
@@ -350,6 +397,10 @@ body {
 }
 /* --- MOBILE SPECIFIC (Pixel 7 / 600px) --- */
 @media (max-width: 600px) {
+    .Btns{
+        width: 60%;
+        flex-direction: column;
+    }
     .video-frame {
         max-width: 350px;
     }

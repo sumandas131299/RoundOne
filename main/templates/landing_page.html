@@ -16,7 +16,7 @@
 	</div>
 <div class="main">
 	<div class="Top">
-	<i class="fa-solid fa-microphone"></i> AI-Powered Voice Interviews
+	<i class="fa-solid fa-microphone"></i> AI-Powered LIVE Interviews
 	</div>
 	<h1>
 		Get Interview Ready   
@@ -26,23 +26,25 @@
 	<p>Upload your resume, mirror with an AI Powered Hiring Manager and <br>
 		get instant feedback to ace your next interview.
 	</p>
-
+    <div class="Btns">
 	<a class="tryBtn" href="{{ url_for('upload.uploadIndex') }}">Try For Free </a>
+    <button class="seeInActionBtn" onclick="scrollToPercentage()">See In Action</button>
+    </div>
 </div>
 
 
 <div class="testimonials">
-	<div class="imgDiv">
-		<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKtKSJxl-K169IYNluymXVhJLi0Z-o_T_yHg&s" alt="girl">
-		<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyCqUpMDREn0LA6iq2UswTp5w34Nnx6fwrgA&s" alt="student">
-		<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUBz7cufwO3nEGUJ36AoAJfwFuSXuXc_1-OQ&s" alt="student1">
-		
-		<div class="last-img-container">
-    			<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1mcKDF23ZHKZW1A2-nBALGjd-9pf_N9S8yQ&s" alt="">
-    			<!-- <span class="test-text">1,300+</span> -->
-  		</div>
-	</div>
-	<span class="test-label">1,300+ candidates already getting interview ready
+        <!-- <div class="imgDiv">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKtKSJxl-K169IYNluymXVhJLi0Z-o_T_yHg&s" alt="girl">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyCqUpMDREn0LA6iq2UswTp5w34Nnx6fwrgA&s" alt="student">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUBz7cufwO3nEGUJ36AoAJfwFuSXuXc_1-OQ&s" alt="student1">
+            
+            <div class="last-img-container">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1mcKDF23ZHKZW1A2-nBALGjd-9pf_N9S8yQ&s" alt="">
+                     
+            </div>
+        </div> -->
+	<span class="test-label">No login or credit card required!
 </span>
 </div>
 
@@ -224,23 +226,27 @@
     </section> -->
 
 
-    <!-- <section class="see-action">
+    <section class="see-action">
     <div class="action-container">
         <div class="section-header">
-            <h2>See It In Action</h2>
-            <p>Watch how our AI transforms your job search workflow</p>
+            <h2>See In Action</h2>
+            <p>Watch how our AI Hiring Manager mirror the interview</p>
         </div>
 
         <div class="video-display-wrapper">
             <div class="video-frame">
                 <video id="actionVideo" autoplay muted loop playsinline controls>
-                    <source src="../static/data/screen-capture.webm" type="video/webm">
+                    <source src="../static/data/screen-capture.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </div>
         </div>
+        <div class="btn-container">
+            <button class="seeInActionBtn" href="{{ url_for('upload.uploadIndex') }}">Try for free</button>
+            <span class="test-label">No login or credit card required!</span>
+        </div>
     </div>
-    </section> -->
+    </section>
 
 <div class="faq">
     <h2>Frequently Asked Questions</h2>

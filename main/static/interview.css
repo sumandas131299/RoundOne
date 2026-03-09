@@ -24,7 +24,11 @@ body {
     gap: 30px; /* Space between the left-aligned items */
     background-color: #f8fafc;
 }
-
+.exitBtn{
+    width: fit-content;
+    padding: 0;
+    color:#ef4444;
+}
 .inter {
 	left:0;
     font-size: 1.2rem;
@@ -242,7 +246,7 @@ button:hover {
         margin-left: 0;
         width: 100%;
         text-align: center;
-        order: 3;
+        /* order: 3; */
     }
 
     .aiManager {

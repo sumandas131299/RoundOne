@@ -10,6 +10,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+function scrollToPercentage() {
+  // Calculate 50% of the total page height
+  const targetScroll = document.documentElement.scrollHeight * 0.35;
+
+  window.scrollTo({
+    top: targetScroll,
+    behavior: 'smooth'
+  });
+}
+
 const tryBtn = document.querySelector('.tryBtn');
 const toptryBtn = document.querySelector('.toptryBtn');
 
