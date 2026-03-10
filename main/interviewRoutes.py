@@ -125,7 +125,7 @@ def save_audio():
 def save_interview():
     session_id = "user_123" 
     transcript = request.form.get('transcript')
-
+    exit=request.form.get('exit')
     # 1. Grab the existing recruiter session
     chat_session = active_interviews.get(session_id)
     
@@ -166,17 +166,18 @@ def save_interview():
         # 2. Send the user's spoken answer to the existing chat
         response = chat_session.send_message(transcript)
         ai_text = response.text
+        print(exit)
         # 3. Handle Completion logic
-        if "INTERVIEW_COMPLETE" in response.text.upper():
+        if "INTERVIEW_COMPLETE" in response.text.upper()  or exit=="True":
             
             # 3. THE FINAL EVALUATION PROMPT
             eval_prompt = """
             The interview is now complete. Review the entire conversation history.
             Provide a final evaluation of the candidate's performance across all questions.
-            
+            critical: if before 3 questions , this you face this prompt then understand user want to left the interview and give score according to that chatHistory no motivation. 
             Criteria: STAR structure, Clarity, Communication, and Resume/JD Match.
             Output: You MUST return a JSON object strictly following the provided schema.
-            Overall score should be out of 10. Give motivating feedback.
+            Overall score should be out of 10. Give feedback.
             """
 
             # Request the final structured data from the SAME chat session

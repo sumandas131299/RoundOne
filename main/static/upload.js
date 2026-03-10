@@ -105,7 +105,7 @@ const mapping = {
     },
     "default": {
         label: "Difficulty Level",
-        options: ["Hard", "Medium", "Easy", "Basic"]
+        options: ["Easy", "Medium", "Hard"]
     }
 };
 

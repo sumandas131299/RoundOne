@@ -353,9 +353,9 @@ body {
     align-items: center;
     justify-content: center;
 }
-.btn-container button{
+.btn-container a{
     
-    background-color: #2563eb;
+    background-color: blue;
     color: white;
     font-weight:600;
 }

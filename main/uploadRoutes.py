@@ -93,7 +93,7 @@ def process_upload():
     1. Use the attached resume as context.
     2. Ask exactly 3 questions, one at a time.
     3. If the user is vague, ask a follow-up. 
-    4. After the 5th answer, say: 'INTERVIEW_COMPLETE'.
+    4. After the 3rd answer or user only respond 'exit==true' or if user want to end the interview, say: 'INTERVIEW_COMPLETE'.
     """
 
     # Start the session and store it globally

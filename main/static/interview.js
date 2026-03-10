@@ -11,11 +11,13 @@ const pulseRing = document.getElementById('avatarPulse');
 
 const type = sessionStorage.getItem('interviewType');
 const diff = sessionStorage.getItem('difficulty');
-
+let exit = false;
 
 document.querySelector('.exitBtn').addEventListener('click', function() {
     if (confirm("Are you sure you want to exit the interview?")) {
-        transcriptBuffer="END The Interview and give Feedback";
+        transcriptBuffer="exit==true";
+        exit = true;
+        console.log(transcriptBuffer);
         sessionStorage.setItem('transcript', transcriptBuffer);
         sendTranscriptToServer();
     }
@@ -225,7 +227,12 @@ function endInterview() {
 
 async function sendTranscriptToServer() {
     const formData = new FormData();
-    formData.append('transcript', transcriptBuffer); 
+    if(exit){
+        formData.append('exit', "True");
+        exit=false;
+    }
+    formData.append('transcript', transcriptBuffer);
+    formData.append('exit', "False");
     formData.append('type', type); 
     formData.append('difficulty', diff);
     formData.append('question', nextQ); // Send the question the user just answered
