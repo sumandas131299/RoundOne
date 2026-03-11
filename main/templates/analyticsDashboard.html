@@ -53,7 +53,7 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-100 text-slate-600 text-xs uppercase font-bold">
-                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4">User Device</th>
                         <th class="px-6 py-4">User ID</th>
                         <th class="px-6 py-4">IP Address</th>
                         <th class="px-6 py-4">First Seen</th>
@@ -102,63 +102,133 @@
             });
         }
 
-        function renderTable(data) {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = data.map((session, idx) => `
-                <tr class="hover:bg-blue-50/30 transition-colors">
-                    <td class="px-6 py-4 text-emerald-500 text-center"><i class="fa-solid fa-circle text-[8px]"></i></td>
-                    <td class="px-6 py-4 font-mono text-xs text-blue-600 font-semibold">${session.user_id}</td>
-                    <td class="px-6 py-4 text-sm">${session.ip}</td>
-                    <td class="px-6 py-4 text-sm text-slate-500">${new Date(session.first_seen).toLocaleString()}</td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs font-bold">${session.pages_visited.length}</span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <button onclick="toggleDetails(${idx})" class="text-slate-400 hover:text-blue-600">
-                            <i id="icon-${idx}" class="fa-solid fa-chevron-down"></i>
-                        </button>
-                    </td>
-                </tr>
-                <tr id="details-${idx}" class="nested-row">
-                    <td colspan="6" class="px-8 py-6 bg-slate-50/50">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <h4 class="text-xs font-bold text-slate-400 uppercase mb-3">System Info</h4>
-                                <p class="text-xs text-slate-600 leading-relaxed bg-white p-3 rounded border border-slate-200 font-mono">
-                                    ${session.user_agent}
-                                </p>
-                                <p class="mt-2 text-xs text-slate-500">Referrer: ${session.referrer || 'Direct'}</p>
-                            </div>
-                            <div>
-                                <h4 class="text-xs font-bold text-slate-400 uppercase mb-3">Session Timeline</h4>
-                                <div class="space-y-3">
-                                    ${session.pages_visited.map(page => `
-                                        <div class="bg-white p-3 rounded border border-slate-200 shadow-sm">
-                                            <div class="flex justify-between items-start mb-2">
-                                                <span class="text-sm font-bold text-slate-700">${page.path}</span>
-                                                <span class="text-[10px] text-slate-400 uppercase">${page.duration_sec}s duration</span>
-                                            </div>
-                                            <div class="text-xs text-slate-500">
-                                                <i class="fa-solid fa-mouse-pointer mr-1"></i> 
-                                                ${page.click_map.length > 0 ? 
-                                                    page.click_map.map(c => `<span class="click-badge">${c.tag} (${c.x},${c.y})</span>`).join('') : 
-                                                    'No clicks recorded'}
-                                            </div>
-                                            <div class="mt-2 h-1 w-full bg-slate-100 rounded">
-                                                <div class="h-1 bg-blue-400 rounded" style="width: ${page.scroll_depth}%"></div>
-                                            </div>
-                                            <p class="text-[9px] text-slate-400 mt-1">Scroll Depth: ${page.scroll_depth}%</p>
-                                        </div>
-                                    `).join('')}
+function renderTable(data) {
+    const tbody = document.getElementById('tableBody');
+    if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-10 text-slate-500">No session data found.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = data.map((session, idx) => {
+        // 1. Identify Device from User Agent
+        const ua = session.user_agent || "";
+        const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+        const uaEmoji = isMobileUA ? "📱" : "💻";
+
+        // 2. Get Resolution from the last visited page
+        const lastPage = session.pages_visited && session.pages_visited.length > 0 
+            ? session.pages_visited[session.pages_visited.length - 1] 
+            : null;
+
+        // Using parseInt for JS comparison
+        const screenRes = (lastPage && parseInt(lastPage.screen_width) > 0)
+            ? `${lastPage.screen_width} x ${lastPage.screen_height}` 
+            : "Unknown Res";
+
+        return `
+            <tr class="hover:bg-blue-50/30 transition-colors border-b border-slate-100 cursor-pointer" onclick="toggleDetails(${idx})">
+                <td class="px-6 py-4 text-center">
+                    <span title="${isMobileUA ? 'Mobile' : 'Desktop'}">${uaEmoji}</span>
+                </td>
+                <td class="px-6 py-4 font-mono text-xs text-blue-600 font-semibold">
+                    ${session.user_id ? session.user_id.substring(0, 15) : 'Anonymous'}
+                </td>
+                <td class="px-6 py-4 text-sm font-medium text-slate-700">${session.ip || '0.0.0.0'}</td>
+                <td class="px-6 py-4 text-sm text-slate-500">
+                    ${session.first_seen ? new Date(session.first_seen).toLocaleString() : 'N/A'}
+                </td>
+                <td class="px-6 py-4 text-center">
+                    <span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full text-xs font-bold">
+                        ${session.pages_visited ? session.pages_visited.length : 0} Views
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    <button class="text-slate-400 hover:text-blue-600">
+                        <i id="icon-${idx}" class="fa-solid fa-chevron-down"></i>
+                    </button>
+                </td>
+            </tr>
+
+            <tr id="details-${idx}" class="nested-row hidden">
+                <td colspan="6" class="px-8 py-6 bg-slate-50/50 border-b border-slate-200">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase mb-4 tracking-wider">Device Context</h4>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs text-slate-500">Current Resolution</span>
+                                    <span class="font-mono text-xs font-bold text-slate-800">${uaEmoji} ${screenRes}</span>
+                                </div>
+                                <div class="pt-2 border-t border-slate-50">
+                                    <h5 class="text-[10px] font-bold text-slate-400 uppercase mb-2">Browser Agent</h5>
+                                    <p class="text-[10px] text-slate-500 leading-relaxed break-all bg-slate-50 p-2 rounded">
+                                        ${ua} ${uaEmoji}
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                    </td>
-                </tr>
-            `).join('');
-        }
 
-        function toggleDetails(idx) {
+                        <div class="lg:col-span-2">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase mb-4 tracking-wider">Page-by-Page Activity</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                ${session.pages_visited.map((page) => {
+                                    // Identify device per page based on width
+                                    const pageIsMobile = parseInt(page.screen_width) < 768;
+                                    //const pageEmoji = pageIsMobile ? "📱" : "💻";
+                                    
+                                    const deviceBadge = pageIsMobile 
+                                        ?'<span class="bg-orange-500 text-white text-[9px] px-2 py-0.5 rounded shadow-sm">MOBILE</span>'
+                                        : '<span class="bg-slate-800 text-white text-[9px] px-2 py-0.5 rounded shadow-sm">DESKTOP</span>';
+                                    return `
+                                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm relative">
+                                            <div class="flex justify-between items-start mb-3">
+                                                <div class="max-w-[70%]">
+                                                    <p class="text-sm font-bold text-slate-800 truncate">${page.path}</p>
+                                                    <p class="text-[10px] text-slate-400 font-mono">${page.screen_width}w x ${page.screen_height}h</p>
+                                                </div>
+                                                <span class="text-lg">${deviceBadge}</span>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <p class="text-[9px] font-bold text-slate-400 uppercase mb-2">Click Events</p>
+                                                <div class="flex flex-wrap gap-1.5">
+                                                    ${page.click_map && page.click_map.length > 0 
+                                                        ? page.click_map.map(click => `
+                                                            <span class="bg-blue-50 text-blue-600 border border-blue-100 px-1.5 py-0.5 rounded text-[9px] font-mono">
+                                                                ${click.tag} (${click.x},${click.y})
+                                                            </span>`).join('') 
+                                                        : '<span class="text-[10px] text-slate-300 italic">No clicks</span>'}
+                                                </div>
+                                            </div>
+
+                                            <div class="space-y-2 pt-2 border-t border-slate-50">
+                                                <div class="flex justify-between text-[10px]">
+                                                    <span class="text-slate-500">Scroll Depth</span>
+                                                    <span class="font-bold text-slate-700">${page.scroll_depth}%</span>
+                                                </div>
+                                                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                                    <div class="bg-blue-600 h-full" style="width: ${page.scroll_depth}%"></div>
+                                                </div>
+                                                <div class="flex justify-between text-[9px] text-slate-400 pt-1">
+                                                    <span>Load: ${page.load_speed_ms}ms</span>
+                                                    <span>Duration: ${page.duration_sec}s</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+         function toggleDetails(idx) {
             const row = document.getElementById(`details-${idx}`);
             const icon = document.getElementById(`icon-${idx}`);
             row.classList.toggle('expanded');
