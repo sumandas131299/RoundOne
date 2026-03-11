@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Pro | Data Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .nested-row { display: none; transition: all 0.3s ease; }
+        .expanded { display: table-row !important; background-color: #f8fafc; }
+        .click-badge { background: #e2e8f0; border-radius: 4px; padding: 2px 6px; font-size: 10px; margin-right: 4px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <h1 class="text-2xl font-bold text-slate-800"><i class="fa-solid fa-database mr-2"></i>User Traffic Logs</h1>
+            
+            <div class="flex gap-4">
+                <div class="bg-white px-6 py-3 rounded-lg shadow-sm border-l-4 border-blue-500">
+                    <p class="text-xs text-slate-500 uppercase font-bold">Total Sessions</p>
+                    <h3 id="stat-total-sessions" class="text-xl font-bold text-slate-800">0</h3>
+                </div>
+                <div class="bg-white px-6 py-3 rounded-lg shadow-sm border-l-4 border-emerald-500">
+                    <p class="text-xs text-slate-500 uppercase font-bold">Unique Users</p>
+                    <h3 id="stat-unique-users" class="text-xl font-bold text-slate-800">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm mb-6 flex flex-wrap gap-4 items-end">
+            <div class="flex-1 min-w-[250px]">
+                <label class="block text-sm font-medium text-slate-700 mb-1">Search User ID or IP</label>
+                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="e.g. e12a38d4 or 127.0.0.1" 
+                       class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+            
+            <div class="min-w-[150px]">
+                <label class="block text-sm font-medium text-slate-700 mb-1">Visited Path</label>
+                <select id="pathFilter" onchange="filterData()" class="w-full border border-slate-200 rounded-lg px-4 py-2 outline-none">
+                    <option value="all">All Pages</option>
+                    </select>
+            </div>
+
+            <button onclick="resetFilters()" class="px-4 py-2 text-slate-500 hover:text-slate-800 text-sm font-medium">
+                Reset Filters
+            </button>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-600 text-xs uppercase font-bold">
+                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4">User ID</th>
+                        <th class="px-6 py-4">IP Address</th>
+                        <th class="px-6 py-4">First Seen</th>
+                        <th class="px-6 py-4 text-center">Page Views</th>
+                        <th class="px-6 py-4">Details</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody" class="divide-y divide-slate-100 text-slate-700">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let rawData = [];
+
+        // Initial Fetch
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/analytics-data');
+                rawData = await response.json();
+                
+                updateStats(rawData);
+                populatePathFilter(rawData);
+                renderTable(rawData);
+            } catch (err) {
+                console.error("Failed to fetch logs:", err);
+            }
+        });
+
+        function updateStats(data) {
+            document.getElementById('stat-total-sessions').innerText = data.length;
+            const uniqueUsers = new Set(data.map(s => s.user_id)).size;
+            document.getElementById('stat-unique-users').innerText = uniqueUsers;
+        }
+
+        function populatePathFilter(data) {
+            const paths = new Set();
+            data.forEach(s => s.pages_visited.forEach(p => paths.add(p.path)));
+            const select = document.getElementById('pathFilter');
+            paths.forEach(path => {
+                const opt = document.createElement('option');
+                opt.value = path;
+                opt.innerText = path;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = data.map((session, idx) => `
+                <tr class="hover:bg-blue-50/30 transition-colors">
+                    <td class="px-6 py-4 text-emerald-500 text-center"><i class="fa-solid fa-circle text-[8px]"></i></td>
+                    <td class="px-6 py-4 font-mono text-xs text-blue-600 font-semibold">${session.user_id}</td>
+                    <td class="px-6 py-4 text-sm">${session.ip}</td>
+                    <td class="px-6 py-4 text-sm text-slate-500">${new Date(session.first_seen).toLocaleString()}</td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs font-bold">${session.pages_visited.length}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <button onclick="toggleDetails(${idx})" class="text-slate-400 hover:text-blue-600">
+                            <i id="icon-${idx}" class="fa-solid fa-chevron-down"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr id="details-${idx}" class="nested-row">
+                    <td colspan="6" class="px-8 py-6 bg-slate-50/50">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase mb-3">System Info</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed bg-white p-3 rounded border border-slate-200 font-mono">
+                                    ${session.user_agent}
+                                </p>
+                                <p class="mt-2 text-xs text-slate-500">Referrer: ${session.referrer || 'Direct'}</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase mb-3">Session Timeline</h4>
+                                <div class="space-y-3">
+                                    ${session.pages_visited.map(page => `
+                                        <div class="bg-white p-3 rounded border border-slate-200 shadow-sm">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <span class="text-sm font-bold text-slate-700">${page.path}</span>
+                                                <span class="text-[10px] text-slate-400 uppercase">${page.duration_sec}s duration</span>
+                                            </div>
+                                            <div class="text-xs text-slate-500">
+                                                <i class="fa-solid fa-mouse-pointer mr-1"></i> 
+                                                ${page.click_map.length > 0 ? 
+                                                    page.click_map.map(c => `<span class="click-badge">${c.tag} (${c.x},${c.y})</span>`).join('') : 
+                                                    'No clicks recorded'}
+                                            </div>
+                                            <div class="mt-2 h-1 w-full bg-slate-100 rounded">
+                                                <div class="h-1 bg-blue-400 rounded" style="width: ${page.scroll_depth}%"></div>
+                                            </div>
+                                            <p class="text-[9px] text-slate-400 mt-1">Scroll Depth: ${page.scroll_depth}%</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function toggleDetails(idx) {
+            const row = document.getElementById(`details-${idx}`);
+            const icon = document.getElementById(`icon-${idx}`);
+            row.classList.toggle('expanded');
+            icon.classList.toggle('fa-rotate-180');
+        }
+
+        function filterData() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const path = document.getElementById('pathFilter').value;
+
+            const filtered = rawData.filter(session => {
+                const matchesSearch = session.user_id.toLowerCase().includes(search) || session.ip.includes(search);
+                const matchesPath = path === 'all' || session.pages_visited.some(p => p.path === path);
+                return matchesSearch && matchesPath;
+            });
+
+            renderTable(filtered);
+            updateStats(filtered);
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('pathFilter').value = 'all';
+            renderTable(rawData);
+            updateStats(rawData);
+        }
+    </script>
+</body>
+</html>

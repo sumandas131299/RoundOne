@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
     const questions = document.querySelectorAll(".faq-question");
 

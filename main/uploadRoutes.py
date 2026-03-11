@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, jsonify, render_template, request, session
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
@@ -78,7 +78,7 @@ active_interviews = {}
 
 @uploadBp.route('/upload/process', methods=['POST'])
 def process_upload():
-    session_id = "user_123" # In production, use flask.session or a UUID
+    session_id = session['user_id'] # In production, use flask.session or a UUID
     i_type = request.form.get('interview_type')
     diff = request.form.get('difficulty')
     file = request.files.get('resume')

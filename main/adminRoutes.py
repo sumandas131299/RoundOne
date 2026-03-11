@@ -16,7 +16,7 @@ client = MongoClient(MONGO_URI)
 db = client['mirrorInterview_db']    # Your Database Name
 reviews_col = db['reviews']   # Your Collection Name
 
-@adminBp.route('/admin/dashboard')
+@adminBp.route('/admin/reviews')
 def dashboard():
     # Fetch all records from Atlas, sorted by newest first
     reviews_cursor = reviews_col.find()

@@ -3,7 +3,7 @@ import os
 import time
 
 
-from flask import Blueprint, json, render_template, request, jsonify
+from flask import Blueprint, json, render_template, request, jsonify, session
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
@@ -28,6 +28,96 @@ def save_audio():
     print(transcript)
     return jsonify({"status": "success", "message": "Audio saved successfully"}), 200
 
+
+
+@interviewBp.route('/interview/save', methods=['POST'])
+def save_interview():
+    session_id = session['user_id'] 
+    transcript = request.form.get('transcript')
+    exit=request.form.get('exit')
+    # 1. Grab the existing recruiter session
+    chat_session = active_interviews.get(session_id)
+    
+    # Print the directory of the object to see what's available
+    # Instead of chat_session.history, use:
+    history = chat_session.get_history()
+
+    if history:
+        print(f"Total messages so far: {len(history)}")
+        for message in history:
+            print(f"{message.role}: {message.parts[0].text}")
+    if not chat_session:
+        return jsonify({"error": "Session expired or not found"}), 400
+
+    #3. Precise Schema for your HTML
+    response_schema = {
+            "type": "OBJECT",
+            "properties": {
+                "overall_score": {"type": "NUMBER"},
+                "score_label": {"type": "STRING"},
+                "overall_feedback": {"type": "STRING"},
+                "categories": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "title": {"type": "STRING"},
+                            "score": {"type": "INTEGER"},
+                            "percentage": {"type": "INTEGER"},
+                            "status": {"type": "STRING"},
+                            "feedback": {"type": "STRING"}
+                        }
+                    }
+                }
+            }
+        }
+    try:
+        # 2. Send the user's spoken answer to the existing chat
+        response = chat_session.send_message(transcript)
+        ai_text = response.text
+        print(exit)
+        # 3. Handle Completion logic
+        if "INTERVIEW_COMPLETE" in response.text.upper()  or exit=="True":
+            
+            # 3. THE FINAL EVALUATION PROMPT
+            eval_prompt = """
+            The interview is now complete. Review the entire conversation history.
+            Provide a final evaluation of the candidate's performance across all questions.
+            critical: if before 3 questions , this you face this prompt then understand user want to left the interview and give score according to that chatHistory no motivation. 
+            Criteria: STAR structure, Clarity, Communication, and Resume/JD Match.
+            Output: You MUST return a JSON object strictly following the provided schema.
+            Overall score should be out of 10. Give feedback.
+            """
+
+            # Request the final structured data from the SAME chat session
+            response = chat_session.send_message(
+                eval_prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=response_schema # Use your schema here
+                )
+            )
+
+            # Cleanup session
+            del active_interviews[session_id]
+            return jsonify({
+                "status": "complete",
+                "data": json.loads(response.text)
+            })
+
+       
+
+        print(response.text)
+        # 4. Return the AI's next question/follow-up
+        return jsonify({
+             
+            "status": "success", 
+            "reply": ai_text
+            
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # @interviewBp.route('/interview/save', methods=['POST'])
 # def save_interview():
@@ -120,92 +210,3 @@ def save_audio():
 
 
 # Assuming deepgram_client is initialized globally
-
-@interviewBp.route('/interview/save', methods=['POST'])
-def save_interview():
-    session_id = "user_123" 
-    transcript = request.form.get('transcript')
-    exit=request.form.get('exit')
-    # 1. Grab the existing recruiter session
-    chat_session = active_interviews.get(session_id)
-    
-    # Print the directory of the object to see what's available
-    # Instead of chat_session.history, use:
-    history = chat_session.get_history()
-
-    if history:
-        print(f"Total messages so far: {len(history)}")
-        for message in history:
-            print(f"{message.role}: {message.parts[0].text}")
-    if not chat_session:
-        return jsonify({"error": "Session expired or not found"}), 400
-
-    #3. Precise Schema for your HTML
-    response_schema = {
-            "type": "OBJECT",
-            "properties": {
-                "overall_score": {"type": "NUMBER"},
-                "score_label": {"type": "STRING"},
-                "overall_feedback": {"type": "STRING"},
-                "categories": {
-                    "type": "ARRAY",
-                    "items": {
-                        "type": "OBJECT",
-                        "properties": {
-                            "title": {"type": "STRING"},
-                            "score": {"type": "INTEGER"},
-                            "percentage": {"type": "INTEGER"},
-                            "status": {"type": "STRING"},
-                            "feedback": {"type": "STRING"}
-                        }
-                    }
-                }
-            }
-        }
-    try:
-        # 2. Send the user's spoken answer to the existing chat
-        response = chat_session.send_message(transcript)
-        ai_text = response.text
-        print(exit)
-        # 3. Handle Completion logic
-        if "INTERVIEW_COMPLETE" in response.text.upper()  or exit=="True":
-            
-            # 3. THE FINAL EVALUATION PROMPT
-            eval_prompt = """
-            The interview is now complete. Review the entire conversation history.
-            Provide a final evaluation of the candidate's performance across all questions.
-            critical: if before 3 questions , this you face this prompt then understand user want to left the interview and give score according to that chatHistory no motivation. 
-            Criteria: STAR structure, Clarity, Communication, and Resume/JD Match.
-            Output: You MUST return a JSON object strictly following the provided schema.
-            Overall score should be out of 10. Give feedback.
-            """
-
-            # Request the final structured data from the SAME chat session
-            response = chat_session.send_message(
-                eval_prompt,
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                    response_schema=response_schema # Use your schema here
-                )
-            )
-
-            # Cleanup session
-            del active_interviews[session_id]
-            return jsonify({
-                "status": "complete",
-                "data": json.loads(response.text)
-            })
-
-       
-
-        print(response.text)
-        # 4. Return the AI's next question/follow-up
-        return jsonify({
-             
-            "status": "success", 
-            "reply": ai_text
-            
-        })
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500

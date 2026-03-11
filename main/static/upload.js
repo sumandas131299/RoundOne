@@ -1,3 +1,4 @@
+
 // 1. Create a global variable to store the file
 let uploadedFile = null;
 
