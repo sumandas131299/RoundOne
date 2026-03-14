@@ -2,10 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="../static/data/logo.png">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics Pro | Data Explorer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+    /* Table & UI Layout */
+    .nested-row { display: none; transition: all 0.3s ease; }
+    .expanded { display: table-row !important; background-color: #f8fafc; }
+    .click-badge { background: #e2e8f0; border-radius: 4px; padding: 2px 6px; font-size: 10px; margin-right: 4px; }
+
+    /* Heatmap Core Styles */
+    #heatmapContainer {
+        background-color: white;
+        transition: box-shadow 0.3s ease;
+        margin-left:120px  ;
+    }
+
+    #heatmapCanvas {
+        position: relative;
+        background: transparent;
+    }
+
+    /* Heatmap Dot Styling */
+    .heat-dot-wrapper {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        pointer-events: none;
+        z-index: 20;
+    }
+
+    .heat-dot {
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(239,68,68,0.8) 0%, rgba(249,115,22,0.4) 60%, transparent 100%);
+        filter: blur(1px);
+    }
+
+    .heat-label {
+        text-transform: uppercase;
+        letter-spacing: -0.025em;
+        font-size: 9px;
+        font-weight: 700;
+        color: white;
+        background-color: rgba(30, 41, 59, 0.8);
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-top: 4px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    /* Custom Scrollbar for Modal Viewport */
+    .modal-viewport::-webkit-scrollbar { width: 8px; height: 8px; }
+    .modal-viewport::-webkit-scrollbar-track { background: #f1f5f9; }
+    .modal-viewport::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .modal-viewport::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
     <style>
         .nested-row { display: none; transition: all 0.3s ease; }
         .expanded { display: table-row !important; background-color: #f8fafc; }
@@ -16,9 +72,14 @@
 
     <div class="max-w-7xl mx-auto">
         <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-            <h1 class="text-2xl font-bold text-slate-800"><i class="fa-solid fa-database mr-2"></i>User Traffic Logs</h1>
+            <h1 class="text-2xl font-bold text-slate-800">
+                <i class="fa-solid fa-database mr-2"></i>User Traffic Logs
+            </h1>
             
             <div class="flex gap-4">
+                <button onclick="downloadExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg shadow-sm text-sm font-bold transition flex items-center gap-2">
+    <i class="fa-solid fa-file-excel"></i> Export to Excel
+</button>
                 <div class="bg-white px-6 py-3 rounded-lg shadow-sm border-l-4 border-blue-500">
                     <p class="text-xs text-slate-500 uppercase font-bold">Total Sessions</p>
                     <h3 id="stat-total-sessions" class="text-xl font-bold text-slate-800">0</h3>
@@ -33,7 +94,7 @@
         <div class="bg-white p-6 rounded-xl shadow-sm mb-6 flex flex-wrap gap-4 items-end">
             <div class="flex-1 min-w-[250px]">
                 <label class="block text-sm font-medium text-slate-700 mb-1">Search User ID or IP</label>
-                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="e.g. e12a38d4 or 127.0.0.1" 
+                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="e.g. e12a38d4..." 
                        class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
             </div>
             
@@ -41,7 +102,7 @@
                 <label class="block text-sm font-medium text-slate-700 mb-1">Visited Path</label>
                 <select id="pathFilter" onchange="filterData()" class="w-full border border-slate-200 rounded-lg px-4 py-2 outline-none">
                     <option value="all">All Pages</option>
-                    </select>
+                </select>
             </div>
 
             <button onclick="resetFilters()" class="px-4 py-2 text-slate-500 hover:text-slate-800 text-sm font-medium">
@@ -53,7 +114,7 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-100 text-slate-600 text-xs uppercase font-bold">
-                        <th class="px-6 py-4">User Device</th>
+                        <th class="px-6 py-4 text-center">Device</th>
                         <th class="px-6 py-4">User ID</th>
                         <th class="px-6 py-4">IP Address</th>
                         <th class="px-6 py-4">First Seen</th>
@@ -67,6 +128,36 @@
         </div>
     </div>
 
+    <div id="heatmapModal" class="fixed inset-0 bg-slate-900/95 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-6xl rounded-2xl overflow-hidden shadow-2xl flex flex-col h-[90vh]">
+            
+            <div class="p-4 border-b flex justify-between items-center bg-white shrink-0">
+                <div>
+                    <h2 class="font-bold text-slate-800">Visual Heatmap</h2>
+                    <p id="modalPathName" class="text-[10px] text-slate-500 font-mono"></p>
+                </div>
+                <button onclick="closeHeatmap()" class="text-slate-400 hover:text-red-500 text-3xl transition">&times;</button>
+            </div>
+            
+            <div class="flex-1 overflow-auto bg-slate-200 p-4 md:p-8 flex justify-center items-start modal-viewport">
+                <div id="scrollWrapper" class="relative">
+                    <div id="heatmapContainer" class="shadow-2xl flex flex-col">
+                        <div id="deviceShell" class="relative z-30 pointer-events-none shrink-0"></div> 
+                        
+                        <div id="heatmapCanvas" class="z-10 pointer-events-none">
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 bg-white border-t flex justify-center gap-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <span class="flex items-center"><i class="fa-solid fa-fire text-red-500 mr-2 animate-pulse"></i> Intent Hotspots</span>
+                <span>View: Full Resolution (1:1)</span>
+            </div>
+        </div>
+    </div>
+
+</body>
     <script>
         let rawData = [];
 
@@ -110,24 +201,23 @@ function renderTable(data) {
     }
 
     tbody.innerHTML = data.map((session, idx) => {
-        // 1. Identify Device from User Agent
+        // 1. Identify Device from User Agent (Sniffing)
         const ua = session.user_agent || "";
         const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
         const uaEmoji = isMobileUA ? "📱" : "💻";
 
-        // 2. Get Resolution from the last visited page
+        // 2. Get Resolution from the last visited page for the summary row
         const lastPage = session.pages_visited && session.pages_visited.length > 0 
             ? session.pages_visited[session.pages_visited.length - 1] 
             : null;
 
-        // Using parseInt for JS comparison
         const screenRes = (lastPage && parseInt(lastPage.screen_width) > 0)
             ? `${lastPage.screen_width} x ${lastPage.screen_height}` 
             : "Unknown Res";
 
         return `
             <tr class="hover:bg-blue-50/30 transition-colors border-b border-slate-100 cursor-pointer" onclick="toggleDetails(${idx})">
-                <td class="px-6 py-4 text-center">
+                <td class="px-6 py-4 text-center text-xl">
                     <span title="${isMobileUA ? 'Mobile' : 'Desktop'}">${uaEmoji}</span>
                 </td>
                 <td class="px-6 py-4 font-mono text-xs text-blue-600 font-semibold">
@@ -143,7 +233,7 @@ function renderTable(data) {
                     </span>
                 </td>
                 <td class="px-6 py-4">
-                    <button class="text-slate-400 hover:text-blue-600">
+                    <button class="text-slate-400 hover:text-blue-600 transition-transform" id="btn-icon-${idx}">
                         <i id="icon-${idx}" class="fa-solid fa-chevron-down"></i>
                     </button>
                 </td>
@@ -157,14 +247,17 @@ function renderTable(data) {
                             <h4 class="text-xs font-bold text-slate-400 uppercase mb-4 tracking-wider">Device Context</h4>
                             <div class="space-y-4">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-xs text-slate-500">Current Resolution</span>
+                                    <span class="text-xs text-slate-500">Global Resolution</span>
                                     <span class="font-mono text-xs font-bold text-slate-800">${uaEmoji} ${screenRes}</span>
                                 </div>
                                 <div class="pt-2 border-t border-slate-50">
-                                    <h5 class="text-[10px] font-bold text-slate-400 uppercase mb-2">Browser Agent</h5>
-                                    <p class="text-[10px] text-slate-500 leading-relaxed break-all bg-slate-50 p-2 rounded">
-                                        ${ua} ${uaEmoji}
+                                    <h5 class="text-[10px] font-bold text-slate-400 uppercase mb-2">User Agent</h5>
+                                    <p class="text-[10px] text-slate-500 leading-relaxed break-all bg-slate-50 p-3 rounded border border-slate-100 font-mono">
+                                        ${ua}
                                     </p>
+                                </div>
+                                <div class="text-xs text-slate-500">
+                                    Referrer: <span class="text-blue-500 truncate inline-block w-40 align-bottom">${session.referrer || 'Direct'}</span>
                                 </div>
                             </div>
                         </div>
@@ -173,46 +266,50 @@ function renderTable(data) {
                             <h4 class="text-xs font-bold text-slate-400 uppercase mb-4 tracking-wider">Page-by-Page Activity</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 ${session.pages_visited.map((page) => {
-                                    // Identify device per page based on width
                                     const pageIsMobile = parseInt(page.screen_width) < 768;
-                                    //const pageEmoji = pageIsMobile ? "📱" : "💻";
-                                    
                                     const deviceBadge = pageIsMobile 
-                                        ?'<span class="bg-orange-500 text-white text-[9px] px-2 py-0.5 rounded shadow-sm">MOBILE</span>'
-                                        : '<span class="bg-slate-800 text-white text-[9px] px-2 py-0.5 rounded shadow-sm">DESKTOP</span>';
+                                        ? '<span class="bg-orange-500 text-white text-[9px] px-2 py-0.5 rounded shadow-sm font-bold">MOBILE</span>' 
+                                        : '<span class="bg-slate-800 text-white text-[9px] px-2 py-0.5 rounded shadow-sm font-bold">DESKTOP</span>';
+                                    
+                                    // Prepare Click Map data for the Heatmap function
+                                    const clickMapData = btoa(JSON.stringify(page.click_map || []));
+
                                     return `
-                                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm relative">
+                                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm relative group hover:border-blue-300 transition-colors">
                                             <div class="flex justify-between items-start mb-3">
-                                                <div class="max-w-[70%]">
+                                                <div class="max-w-[65%]">
                                                     <p class="text-sm font-bold text-slate-800 truncate">${page.path}</p>
                                                     <p class="text-[10px] text-slate-400 font-mono">${page.screen_width}w x ${page.screen_height}h</p>
                                                 </div>
-                                                <span class="text-lg">${deviceBadge}</span>
+                                                <div class="flex flex-col items-end gap-2">
+                                                    ${deviceBadge}
+                                                    <button onclick="event.stopPropagation(); generateHeatmap('${page.path}', ${page.screen_width}, ${page.screen_height}, '${clickMapData}')" 
+                                                            class="text-[9px] bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition flex items-center">
+                                                        <i class="fa-solid fa-fire mr-1"></i> Heatmap
+                                                    </button>
+                                                </div>
                                             </div>
 
                                             <div class="mb-4">
-                                                <p class="text-[9px] font-bold text-slate-400 uppercase mb-2">Click Events</p>
-                                                <div class="flex flex-wrap gap-1.5">
+                                                <p class="text-[9px] font-bold text-slate-400 uppercase mb-2">Click Tags</p>
+                                                <div class="flex flex-wrap gap-1">
                                                     ${page.click_map && page.click_map.length > 0 
-                                                        ? page.click_map.map(click => `
-                                                            <span class="bg-blue-50 text-blue-600 border border-blue-100 px-1.5 py-0.5 rounded text-[9px] font-mono">
-                                                                ${click.tag} (${click.x},${click.y})
-                                                            </span>`).join('') 
+                                                        ? page.click_map.map(c => `<span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[9px] border border-slate-200">${c.tag}</span>`).join('') 
                                                         : '<span class="text-[10px] text-slate-300 italic">No clicks</span>'}
                                                 </div>
                                             </div>
 
                                             <div class="space-y-2 pt-2 border-t border-slate-50">
-                                                <div class="flex justify-between text-[10px]">
-                                                    <span class="text-slate-500">Scroll Depth</span>
-                                                    <span class="font-bold text-slate-700">${page.scroll_depth}%</span>
+                                                <div class="flex justify-between text-[10px] font-medium text-slate-500">
+                                                    <span>Scroll Depth</span>
+                                                    <span>${page.scroll_depth}%</span>
                                                 </div>
                                                 <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                                                    <div class="bg-blue-600 h-full" style="width: ${page.scroll_depth}%"></div>
+                                                    <div class="bg-blue-600 h-full transition-all duration-1000" style="width: ${page.scroll_depth}%"></div>
                                                 </div>
                                                 <div class="flex justify-between text-[9px] text-slate-400 pt-1">
-                                                    <span>Load: ${page.load_speed_ms}ms</span>
-                                                    <span>Duration: ${page.duration_sec}s</span>
+                                                    <span>Load: <b>${page.load_speed_ms}ms</b></span>
+                                                    <span>Stay: <b>${page.duration_sec}s</b></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -227,8 +324,99 @@ function renderTable(data) {
         `;
     }).join('');
 }
+         
 
-         function toggleDetails(idx) {
+function generateHeatmap(path, width, height, clickMapBase64) {
+    const modal = document.getElementById('heatmapModal');
+    const container = document.getElementById('heatmapContainer');
+    const canvas = document.getElementById('heatmapCanvas');
+    const shell = document.getElementById('deviceShell');
+    const scrollWrapper = document.getElementById('scrollWrapper');
+    const clickMap = JSON.parse(atob(clickMapBase64));
+    const isMobile = parseInt(width) < 768;
+
+    // 1. Reset Content
+    document.getElementById('modalPathName').innerText = `Path: ${path}`;
+    canvas.innerHTML = ''; 
+    
+    // 2. Render Shell (Browser/Phone Header)
+    if (isMobile) {
+        shell.innerHTML = `
+            <div class="bg-slate-900 text-white text-[10px] px-6 py-2 flex justify-between items-center rounded-t-[32px]">
+                <span>9:41</span><i class="fa-solid fa-battery-full"></i>
+            </div>
+            <div class="bg-slate-50 border-b p-2 text-center text-[9px] text-slate-400 font-mono italic">${path}</div>`;
+        container.style.borderRadius = "32px";
+    } else {
+        shell.innerHTML = `
+            <div class="bg-slate-200 p-2 flex items-center gap-2 border-b rounded-t-lg">
+                <div class="flex gap-1 px-2"><div class="w-2 h-2 rounded-full bg-red-400"></div><div class="w-2 h-2 rounded-full bg-green-400"></div></div>
+                <div class="bg-white rounded px-3 py-1 text-[10px] text-slate-400 flex-1 border border-slate-300 truncate">https://yoursite.com${path}</div>
+            </div>`;
+        container.style.borderRadius = "8px";
+    }
+
+    // 3. Set Dimensions to 100% of captured data (No Scaling)
+    const fullWidth = parseInt(width);
+    const fullHeight = parseInt(height);
+
+    // Apply exact pixels to ensure all 100% scroll data is rendered
+    container.style.width = fullWidth + 'px';
+    container.style.height = 'auto'; // Let it grow with content
+    container.style.transform = 'none'; // Remove any previous scaling
+    
+    canvas.style.width = fullWidth + 'px';
+    canvas.style.height = fullHeight + 'px';
+
+    // Wrapper ensures the modal's scrollbars react to the full size
+    scrollWrapper.style.width = fullWidth + 'px';
+    scrollWrapper.style.height = 'auto';
+
+    // 4. Render Dots with Tag Names
+    clickMap.forEach(click => {
+        const dotGroup = document.createElement('div');
+        dotGroup.className = 'absolute flex flex-col items-center pointer-events-none z-20';
+        
+        const dotSize = isMobile ? 30 : 22;
+        dotGroup.style.left = (click.x - dotSize/2) + 'px';
+        dotGroup.style.top = (click.y - dotSize/2) + 'px';
+
+        // The Heat Dot
+        const dot = document.createElement('div');
+        dot.style.width = dotSize + 'px';
+        dot.style.height = dotSize + 'px';
+        dot.style.borderRadius = '50%';
+        dot.style.background = 'radial-gradient(circle, rgba(239,68,68,0.8) 0%, rgba(249,115,22,0.4) 60%, transparent 100%)';
+        dot.style.filter = 'blur(1px)';
+
+        // The Tag Name Label
+        const label = document.createElement('span');
+        label.innerText = click.tag || 'EL';
+        label.className = 'text-[9px] font-bold text-white bg-slate-800/80 px-1.5 py-0.5 rounded shadow-sm mt-1 uppercase tracking-tighter';
+
+        dotGroup.appendChild(dot);
+        dotGroup.appendChild(label);
+        canvas.appendChild(dotGroup);
+    });
+
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; 
+    modal.querySelector('.flex-1').scrollTop = 0;
+}
+
+
+function closeHeatmap() {
+    document.getElementById('heatmapModal').classList.add('hidden');
+    document.body.style.overflow = 'auto'; // Re-enable scrolling
+}
+
+// Close modal on 'Esc' key
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeHeatmap();
+});
+
+
+function toggleDetails(idx) {
             const row = document.getElementById(`details-${idx}`);
             const icon = document.getElementById(`icon-${idx}`);
             row.classList.toggle('expanded');
@@ -255,6 +443,79 @@ function renderTable(data) {
             renderTable(rawData);
             updateStats(rawData);
         }
+
+        function downloadExcel() {
+    if (!rawData || rawData.length === 0) {
+        alert("No data available to download");
+        return;
+    }
+
+    // Flatten the data: One row per page visit
+    const flattenedData = [];
+
+    rawData.forEach(session => {
+        session.pages_visited.forEach(page => {
+            flattenedData.push({
+                "User ID": session.user_id,
+                "IP Address": session.ip,
+                "First Seen": new Date(session.first_seen).toLocaleString(),
+                "Last Seen": new Date(session.last_active).toLocaleString(),
+                "Referrer": session.referrer || 'Direct',
+                "Device": /Android|iPhone|iPad/i.test(session.user_agent) ? 'Mobile' : 'Desktop',
+                "Path": page.path,
+                "Screen Resolution": `${page.screen_width}x${page.screen_height}`,
+                "Scroll Depth %": page.scroll_depth,
+                "Load Speed (ms)": page.load_speed_ms,
+                "Duration (sec)": page.duration_sec,
+                "Total Clicks": page.click_map ? page.click_map.length : 0,
+                "Clicked Elements": page.click_map ? page.click_map.map(c => c.tag).join(', ') : '',
+                "User Agent": session.user_agent
+            });
+        });
+    });
+
+    // Create Worksheet
+    const ws = XLSX.utils.json_to_sheet(flattenedData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Traffic Logs");
+
+    // Generate File and Download
+    const timestamp = new Date().toISOString().split('T')[0];
+    XLSX.writeFile(wb, `Analytics_Export_${timestamp}.xlsx`);
+}
     </script>
+
+<!-- <div id="heatmapModal" class="fixed inset-0 bg-slate-900/95 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-6xl rounded-2xl overflow-hidden shadow-2xl flex flex-col h-[90vh]">
+        <div class="p-4 border-b flex justify-between items-center bg-white shrink-0">
+            <div>
+                <h2 class="font-bold text-slate-800">Visual Heatmap</h2>
+                <p id="modalPathName" class="text-[10px] text-slate-500 font-mono"></p>
+            </div>
+            <button onclick="closeHeatmap()" class="text-slate-400 hover:text-red-500 text-3xl transition">&times;</button>
+        </div>
+        
+        <div class="flex-1 overflow-auto bg-slate-200 p-4 md:p-8 flex justify-center items-start">
+            <div id="scrollWrapper" class="relative w-full h-full">
+                <div id="heatmapContainer" class="bg-white shadow-2xl relative border border-slate-300 flex flex-col w-full h-full">
+                    <div id="deviceShell" class="relative z-30 pointer-events-none shrink-0"></div> 
+                    
+                    <div id="heatmapCanvas" class="relative z-10 pointer-events-none bg-transparent w-full h-full min-h-[500px]">
+                        <div class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+                            <span id="placeholderText" class="text-slate-400 font-bold uppercase tracking-widest text-sm text-center"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-3 bg-white border-t flex justify-center gap-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            <span class="flex items-center"><i class="fa-solid fa-fire text-red-500 mr-2 animate-pulse"></i> Intent Hotspots</span>
+            <span>View: Full Resolution (1:1)</span>
+        </div>
+    </div>
+</div> -->
+
+       
 </body>
 </html>

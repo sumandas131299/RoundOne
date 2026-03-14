@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 function scrollToPercentage() {
   // Calculate 50% of the total page height
-  const targetScroll = document.documentElement.scrollHeight * 0.35;
+  const targetScroll = document.documentElement.scrollHeight * 0.72;
 
   window.scrollTo({
     top: targetScroll,
@@ -21,20 +21,20 @@ function scrollToPercentage() {
   });
 }
 
-const tryBtn = document.querySelector('.tryBtn');
-const toptryBtn = document.querySelector('.toptryBtn');
+// const tryBtn = document.querySelector('.tryBtn');
+// const toptryBtn = document.querySelector('.toptryBtn');
 
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if (!entry.isIntersecting) {
-            toptryBtn.style.display ='inline-block';
+// const observer = new IntersectionObserver(entries => {
+//     entries.forEach(entry => {
+//         if (!entry.isIntersecting) {
+//             toptryBtn.style.display ='inline-block';
             
-        } else {
-            toptryBtn.style.display = 'none';
-        }
-    });
-}, {
-    threshold: 0.9 // Adjust the threshold as needed (0 to 1)
-});
+//         } else {
+//             toptryBtn.style.display = 'none';
+//         }
+//     });
+// }, {
+//     threshold: 0.9 // Adjust the threshold as needed (0 to 1)
+// });
 
-observer.observe(tryBtn)
+// observer.observe(tryBtn)
