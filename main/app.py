@@ -28,6 +28,8 @@ def create_app():
     app.register_blueprint(uploadBp)
     app.secret_key = os.getenv("SECRET_KEY")
 
+    
+
     @app.route('/api/analytics/collect', methods=['POST'])
     def collect_all_metrics():
         #print("Inside collect_all_metrics" , session['user_id'])

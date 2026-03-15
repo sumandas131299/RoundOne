@@ -5,7 +5,12 @@ from flask import Blueprint,render_template, session ,request
 
 landingBp = Blueprint('landing',__name__)
 
-
+@landingBp.route('/termsandconditions')
+def termsandconditions():
+    return render_template('termsCondition.html')
+@landingBp.route('/privacypolicy')
+def privacypolicy():
+        return render_template('privacypolicy.html')
 @landingBp.route('/')
 def landingIndex():
     if 'user_id' not in session:
