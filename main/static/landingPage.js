@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 function scrollToPercentage() {
   // Calculate 50% of the total page height
-  const targetScroll = document.documentElement.scrollHeight * 0.72;
+  const targetScroll = document.documentElement.scrollHeight * 0.5;
 
   window.scrollTo({
     top: targetScroll,
