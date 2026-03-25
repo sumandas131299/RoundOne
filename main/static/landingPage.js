@@ -5,15 +5,27 @@ document.addEventListener("DOMContentLoaded", () => {
     questions.forEach(question => {
         question.addEventListener("click", () => {
             const answer = question.nextElementSibling;
+            const isOpen = answer.style.maxHeight;
 
-            answer.style.maxHeight = 
-                answer.style.maxHeight ? null : answer.scrollHeight + "px";
+            // 1. Close all other open answers
+            document.querySelectorAll(".faq-answer").forEach(el => {
+                el.style.maxHeight = null;
+            });
+
+            // 2. Remove 'active' class from all other questions (if you use it for icon rotation)
+            questions.forEach(q => q.classList.remove("active"));
+
+            // 3. If the clicked one wasn't already open, open it
+            if (!isOpen) {
+                answer.style.maxHeight = answer.scrollHeight + "px";
+                question.classList.add("active");
+            }
         });
     });
 });
 function scrollToPercentage() {
   // Calculate 50% of the total page height
-  const targetScroll = document.documentElement.scrollHeight * 0.5;
+  const targetScroll = document.documentElement.scrollHeight * 0.71;
 
   window.scrollTo({
     top: targetScroll,

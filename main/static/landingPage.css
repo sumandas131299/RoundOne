@@ -352,10 +352,14 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  text-align: right;
+  text-align: center;
   margin-top: 60px;;
 }
-
+.footer-links i {
+  font-size: 1.5rem;
+    color: blue;
+    
+}
 .footer-links a {
   text-decoration: none;
   color: #667085;
@@ -493,12 +497,12 @@ body {
 .dim-card:hover { transform: translateY(-5px); }
 .dim-card { background: white; border: 1px solid var(--text-muted); padding: 35px; border-radius: 16px; }
 .dim-card i { color: blue; font-size: 1.5rem; margin-bottom: 20px; display: block; }
-.dim-card h3 { font-size: 1.25rem; color: #000; margin-bottom: 12px; }
-.dim-card p { color: var(--text-muted); font-size: 0.95rem; }
+.dim-card h3 { text-align: center; font-size: 1.25rem; color: #000; margin-bottom: 12px; }
+.dim-card p { text-align: center; color: var(--text-muted); font-size: 0.95rem; }
 
 /* STICKY SCROLL STORYTELLING */
-.story-scroll-container { display: flex; background: black; color: white; padding: 100px 8%; position: relative; }
-.story-sticky-left { flex: 1; position: sticky; top: 150px; height: fit-content; padding-right: 80px; }
+.story-scroll-container { display: flex; background: #101010; color: white; padding: 100px 8%; position: relative; }
+.story-sticky-left { flex: 1; position: sticky; top: 150px; height: fit-content; padding-left: 80px; text-align: center; }
 .how-it-works { color: var(--brand-blue); font-weight: 700; font-size: 0.75rem; letter-spacing: 1px; }
 .story-sticky-left h2 { font-size: 3.5rem; line-height: 1.1; margin: 20px 0; }
 .start-btn-blue { display: inline-block; background: var(--brand-blue); color: white; padding: 12px 28px; border-radius: 6px; text-decoration: none; margin-top: 30px; }
@@ -510,11 +514,17 @@ body {
 .step-tag { font-size: 0.7rem; color: #58A6FF; border-left: 2px solid #58A6FF; padding-left: 10px; margin-bottom: 15px; display: block; }
 
 /* DARK UI MOCKUPS */
-.dark-mockup { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; margin-top: 30px; padding: 30px; }
-.upload-box-ui { text-align: center; border: 2px dashed #30363D; padding: 40px; border-radius: 12px; }
-.pill-row { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
-.pill { padding: 6px 14px; border-radius: 20px; background: #21262D; border: 1px solid #30363D; font-size: 0.8rem; }
-.pill.active { border-color: var(--brand-blue); background: rgba(0, 71, 255, 0.1); }
+.dark-mockup {  background: white; border: 1px solid var(--border); border-radius: 16px; margin-top: 30px; padding: 30px; }
+.dark-mockup :hover {border-color: blue; background-color: #ecf0f8; }
+.dark-mockup i {transition: all 0.3s; color: blue; }
+.dark-mockup p, .subtext {transition: all 0.3s; color: var(--text-muted); }
+.upload-box-ui { text-align: center; border: 2px dashed #30363D; padding: 40px; border-radius: 12px; color: black; }
+.pill-row {transition: all 0.3s; display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+.pill { padding: 6px 14px; border-radius: 20px;  border: 1px solid #30363D; font-size: 0.8rem; }
+.pill.active { border-color: blue; background: rgba(0, 71, 255, 0.1); color: blue; }
+.pill-row :hover{
+    transform: translateY(-5px);
+}
 
 .interview-ui { border: 1px solid #30363D; border-radius: 12px; overflow: hidden; background: #0D1117; padding: 20px; }
 .ai-header { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 20px; }
@@ -523,6 +533,155 @@ body {
 .time-left { color: #FF7B72; float: right; }
 .progress-bg { height: 4px; background: #30363D; border-radius: 2px; margin-top: 10px; }
 .progress-fill { width: 60%; height: 100%; background: #A371F7; }
+
+/* MODERN UI CORE */
+.modern-glass {
+    background-color: white;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 15px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s;
+}
+.modern-glass :hover{
+    transform: translateY(-5px);
+}
+
+/* STEP 02 SELECTION */
+.type-selection-ui { display: flex; flex-direction: column; gap: 12px; }
+.type-item { 
+    
+    display: flex; align-items: center; padding: 14px; 
+    background: rgba(255,255,255,1); border-radius: 12px; 
+    border: 1px solid var(--text-muted); transition: 0.3s ease;
+}
+.type-item.active { 
+    border-color: blue; 
+    background: rgba(0, 112, 243, 0.1); 
+    box-shadow: 0 0 15px rgba(0, 112, 243, 0.2);
+}
+.icon-orb { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 15px; }
+.icon-orb.blue { background: #0070f3; color: white; }
+.icon-orb.purple { background: #A371F7; color: white; }
+.icon-orb.gold { background: gold; color: white; }
+.type-text strong { color: #000; display: block; font-size: 0.95rem; }
+.type-text small { color: #888; font-size: 0.8rem; }
+.difficulty-dots { margin-left: auto; display: flex; gap: 4px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #333; }
+.dot.filled { background: #0070f3; }
+
+/* CONTAINER: INTERVIEW WINDOW */
+.interview-window {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #000;
+    height: 320px; /* Increased height for a more realistic video feel */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* THE BACKGROUND VIDEO/IMAGE FEED */
+.ai-video-placeholder {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ai-avatar-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    
+    height: 100%;
+}
+
+.ai-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit:fill;
+    
+    
+    filter: brightness(0.8) contrast(1.1);
+    transition: filter 0.5s ease;
+    
+    
+}
+
+/* LIVE STATUS OVERLAY */
+.live-status {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 77, 77, 0.9);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 900;
+    padding: 4px 12px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+    backdrop-filter: blur(4px);
+    z-index: 5;
+}
+
+/* WAVEFORM (Now floating in the top right) */
+.ai-video-placeholder .waveform {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    display: flex;
+    gap: 4px;
+    z-index: 5;
+}
+
+.waveform span {
+    width: 3px;
+    height: 12px;
+    background: #0070f3;
+    border-radius: 10px;
+    
+    animation: bounceWave 0.8s infinite ease-in-out;
+}
+
+.step4-img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+/* CONTROLS AREA (Floating at bottom) */
+
+
+
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    .interview-window { height: 320px; }
+    .ai-avatar-img{
+                background-color: #1a1919;
+        
+        object-fit: contain;
+        object-position: center;
+    }
+    
+}
+/* STEP 04 FEEDBACK */
+.score-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.ai-badge { font-size: 0.65rem; padding: 4px 10px; border: 1px solid #0070f3; color: #0070f3; border-radius: 20px; font-weight: 900; letter-spacing: 0.5px; }
+.stat-item { margin-bottom: 20px; }
+.stat-label { display: flex; justify-content: space-between; font-size: 0.85rem; color: #bbb; margin-bottom: 8px; }
+.stat-label span { color: white; font-weight: 800; }
+.stat-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+.stat-fill { height: 100%; background: #0070f3; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 112, 243, 0.4); }
+
+/* ANIMATIONS */
+@keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes bounceWave { 0%, 100% { height: 10px; } 50% { height: 24px; } }
+
 
 /* Comparison Table */
 .comparison-section { padding: 100px 8%; text-align: center; background: #FAFBFC; width: 100%;}
@@ -542,7 +701,7 @@ td { padding: 25px; border-bottom: 1px solid #F1F5F9; text-align: left; }
     
     width: 100%;
     height: 0;
-    background: #A371F7;
+    background: blue;
     animation: fill-line linear forwards;
     animation-timeline: --section-scroll;
     
@@ -630,7 +789,7 @@ td { padding: 25px; border-bottom: 1px solid #F1F5F9; text-align: left; }
     }
 
     .story-sticky-left {
-        padding-right: 0;
+        padding-left: 0;
         margin-bottom: 40px;
         text-align: center;
     }
@@ -684,5 +843,42 @@ td { padding: 25px; border-bottom: 1px solid #F1F5F9; text-align: left; }
         font-size: 0.75rem;
         display: block;
         margin-top: 15px;
+    }
+
+    .timer-orb {
+        width: 32px !important;   /* Force smaller size */
+        height: 32px !important;
+        flex-shrink: 0;           /* Prevent it from being squashed */
+    }
+
+    /* 2. Scale the SVG ring inside */
+    .circular-chart {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* 3. Adjust the time text to fit the smaller ring */
+    .time-text {
+        font-size: 0.6rem !important;
+        letter-spacing: -0.5px;
+    }
+
+    /* 4. Adjust the controls padding so things don't hit the edges */
+    .interview-controls {
+        padding: 10px 12px !important;
+        gap: 8px !important;
+    }
+
+    /* 5. Make the speech bubble text smaller to compensate */
+    .ai-speech-bubble {
+        font-size: 0.7rem !important;
+        padding: 8px 10px !important;
+    }
+
+    /* 6. Slightly shrink the avatar area to give more horizontal breathing room */
+    .ai-avatar-container {
+        width: 90px !important;
+        height: 90px !important;
+        margin-bottom: 15px !important;
     }
 }
